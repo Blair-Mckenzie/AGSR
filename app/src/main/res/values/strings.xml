@@ -3,7 +3,7 @@
     <string name="bottom_home_nav_text">Home</string>
     <string name="bottom_profile_nav_text">Profile</string>
     <string name="bottom_calendar_nav_text">Calendar</string>
-    <string name="home_fragment_message">Home Page</string>
+    <string name="home_fragment_title">Home Page</string>
     <string name="profile_fragment_message">Profile</string>
     <string name="calendar_fragment_message">Calendar</string>
     <string name="steps_input">Add Steps</string>

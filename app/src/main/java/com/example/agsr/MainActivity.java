@@ -1,14 +1,12 @@
 package com.example.agsr;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.fragment.NavHostFragment;
-import androidx.navigation.ui.NavigationUI;
-
 import android.os.Bundle;
-import android.view.View;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -23,6 +21,9 @@ public class MainActivity extends AppCompatActivity {
         NavHostFragment hostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentContainerView);
         assert hostFragment != null;
         NavController navController = hostFragment.getNavController();
-        NavigationUI.setupWithNavController(bottomNav,navController);
+        AppBarConfiguration appBarConfiguration =
+                new AppBarConfiguration.Builder(R.id.fragment_home, R.id.fragment_targets, R.id.fragment_calendar).build();
+        NavigationUI.setupActionBarWithNavController(this,navController,appBarConfiguration);
+        NavigationUI.setupWithNavController(bottomNav, navController);
     }
 }
