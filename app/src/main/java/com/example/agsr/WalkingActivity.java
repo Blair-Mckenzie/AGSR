@@ -5,17 +5,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.List;
 
 public class WalkingActivity extends RecyclerView.Adapter<WalkingActivity.ViewHolder> {
 
     private ArrayList<Walks> mData;
     private LayoutInflater mInflater;
+    ProgressBar progressBar;
+    TextView currentSteps;
+    TextView displayPercentage;
+
 
     // data is passed into the constructor
     WalkingActivity(Context context, ArrayList<Walks> data) {
@@ -27,6 +32,9 @@ public class WalkingActivity extends RecyclerView.Adapter<WalkingActivity.ViewHo
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = mInflater.inflate(R.layout.walking_activity, parent, false);
+        progressBar = view.findViewById(R.id.progress_bar);
+        currentSteps = view.findViewById(R.id.text_view_steps_progress);
+        displayPercentage = view.findViewById(R.id.text_view_progress_percentage);
         return new ViewHolder(view);
     }
 
@@ -35,7 +43,7 @@ public class WalkingActivity extends RecyclerView.Adapter<WalkingActivity.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
         Walks walk = mData.get(position);
         holder.title.setText(walk.getTitle());
-        holder.numSteps.setText(String.valueOf(walk.getNumSteps()));
+        holder.numSteps.setText(MessageFormat.format("{0} Steps",String.valueOf(walk.getNumSteps())));
     }
 
     // total number of rows
@@ -44,6 +52,11 @@ public class WalkingActivity extends RecyclerView.Adapter<WalkingActivity.ViewHo
         return mData.size();
     }
 
+    private void removeAt(int position) {
+        mData.remove(position);
+        notifyItemRemoved(position);
+        notifyItemRangeChanged(position, mData.size());
+    }
     // stores and recycles views as they are scrolled off screen
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView title;
@@ -59,15 +72,12 @@ public class WalkingActivity extends RecyclerView.Adapter<WalkingActivity.ViewHo
             deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
+                    fragment_home.setNumSteps(fragment_home.getNumSteps()- mData.get(getAdapterPosition()).getNumSteps()); ;
+                    fragment_home.setProg(((double) fragment_home.getNumSteps() / (double)fragment_home.getGoal() * 100));
+                    fragment_home.updateProgressBar();
+                    removeAt(getAdapterPosition());
                 }
             });
         }
-    }
-
-
-    // parent activity will implement this method to respond to click events
-    public interface ItemClickListener {
-        void onItemClick(View view, int position);
     }
 }

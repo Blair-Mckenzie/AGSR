@@ -18,6 +18,8 @@ import android.widget.Toast;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
 
+import org.w3c.dom.Text;
+
 import java.text.MessageFormat;
 import java.util.ArrayList;
 
@@ -28,30 +30,19 @@ import java.util.ArrayList;
  */
 public class fragment_home extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
+    private static int numSteps = 0;
+    private  static double prog = 0.0;
     WalkingActivity adapter;
-    private int prog = 0;
-    private int goal = 10000;
-//    private MessageFormat stepsTemplate;
-    private String mParam2;
+    private static int goal = 10000;
+
+    private static ProgressBar  progressBar;
+    private static TextView displayCurrentSteps;
+    private static TextView displayPercentage;
+
 
     public fragment_home() {
         // Required empty public constructor
     }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-
-     * @return A new instance of fragment fragment_home.
-     */
-    // TODO: Rename and change types and number of parameters
     public static fragment_home newInstance(int prog, int goal) {
         fragment_home fragment = new fragment_home();
         Bundle args = new Bundle();
@@ -81,13 +72,13 @@ public class fragment_home extends Fragment {
 
         EditText addStepsTextview = view.findViewById(R.id.steps_input);
         EditText addActivityName = view.findViewById(R.id.activity_name_input);
-        TextView displayCurrentSteps = view.findViewById(R.id.text_view_steps_progress);
-        TextView displayPercentage = view.findViewById(R.id.text_view_progress_percentage);
+        displayCurrentSteps = view.findViewById(R.id.text_view_steps_progress);
+        displayPercentage = view.findViewById(R.id.text_view_progress_percentage);
         MaterialButton addStepsButton = view.findViewById(R.id.add_steps_button);
-        ProgressBar progressBar = view.findViewById(R.id.progress_bar);
+        progressBar = view.findViewById(R.id.progress_bar);
 
-        displayCurrentSteps.setText(MessageFormat.format("{0} / {1}",String.valueOf(prog), goal ));
-        double progress = ((double) prog / (double)goal) * 100;
+        displayCurrentSteps.setText(MessageFormat.format("{0} / {1}",numSteps, goal ));
+        double progress = (prog / (double)goal) * 100;
         displayPercentage.setText(MessageFormat.format("{0} %",String.valueOf(Math.round(progress))));
 
         addStepsButton.setOnClickListener(new View.OnClickListener() {
@@ -101,11 +92,8 @@ public class fragment_home extends Fragment {
                 }else if(isEmptyInput(addActivityName)){
                     addActivityName.setError("Required");
                 } else {
-                    prog += Integer.parseInt((addStepsTextview.getText().toString()));
-                    displayCurrentSteps.setText(MessageFormat.format("{0} / {1}",String.valueOf(prog), goal ));
-                    double progress = ((double) prog / (double)goal) * 100;
-                    progressBar.setProgress((int)progress);
-                    displayPercentage.setText(MessageFormat.format("{0} %",String.valueOf(Math.round(progress))));
+                    numSteps += Integer.parseInt((addStepsTextview.getText().toString()));
+                    updateProgressBar();
                     walks.add(0,new Walks(addActivityName.getText().toString(),Integer.parseInt(addStepsTextview.getText().toString())));
                     adapter.notifyItemInserted(0);
                 }
@@ -114,8 +102,29 @@ public class fragment_home extends Fragment {
         return view;
     }
 
+    public static void updateProgressBar(){
+        prog = (((double) numSteps / (double)goal) * 100);
+        progressBar.setProgress((int)prog,true);
+        displayCurrentSteps.setText(MessageFormat.format("{0} / {1}",String.valueOf(numSteps), goal ));
+        displayPercentage.setText(MessageFormat.format("{0} %",String.valueOf(Math.round(prog))));
+    }
     private boolean isEmptyInput (EditText editText){
         return editText.getText().toString().length() == 0;
+    }
+
+    public static int getNumSteps() {
+        return numSteps;
+    }
+
+    public static void setNumSteps(int numSteps) {
+        fragment_home.numSteps = numSteps;
+    }
+
+    public static void setProg(double prog) {
+        fragment_home.prog = prog;
+    }
+    public static int getGoal() {
+        return goal;
     }
 
 }
