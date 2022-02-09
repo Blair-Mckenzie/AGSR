@@ -1,5 +1,8 @@
 package com.example.agsr;
 
+import android.app.ActionBar;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,5 +28,6 @@ public class MainActivity extends AppCompatActivity {
                 new AppBarConfiguration.Builder(R.id.fragment_home, R.id.fragment_targets, R.id.fragment_calendar).build();
         NavigationUI.setupActionBarWithNavController(this,navController,appBarConfiguration);
         NavigationUI.setupWithNavController(bottomNav, navController);
+
     }
 }

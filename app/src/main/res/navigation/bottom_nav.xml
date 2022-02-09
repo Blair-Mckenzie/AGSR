@@ -8,16 +8,16 @@
     <fragment
         android:id="@+id/fragment_home"
         android:name="com.example.agsr.fragment_home"
-        android:label="fragment_home"
+        android:label="Home"
         tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/fragment_targets"
         android:name="com.example.agsr.fragment_targets"
-        android:label="fragment_targets"
+        android:label="Targets"
         tools:layout="@layout/fragment_targets" />
     <fragment
         android:id="@+id/fragment_calendar"
         android:name="com.example.agsr.fragment_calendar"
-        android:label="fragment_calendar"
+        android:label="Calendar"
         tools:layout="@layout/fragment_calendar" />
 </navigation>
