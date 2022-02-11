@@ -13,9 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 
-public class WalkingActivity extends RecyclerView.Adapter<WalkingActivity.ViewHolder> {
+public class WalkingAdapter extends RecyclerView.Adapter<WalkingAdapter.ViewHolder> {
 
-    private ArrayList<Walks> mData;
+    private ArrayList<Walk> mData;
     private LayoutInflater mInflater;
     ProgressBar progressBar;
     TextView currentSteps;
@@ -23,7 +23,7 @@ public class WalkingActivity extends RecyclerView.Adapter<WalkingActivity.ViewHo
 
 
     // data is passed into the constructor
-    WalkingActivity(Context context, ArrayList<Walks> data) {
+    WalkingAdapter(Context context, ArrayList<Walk> data) {
         this.mInflater = LayoutInflater.from(context);
         this.mData = data;
     }
@@ -41,7 +41,7 @@ public class WalkingActivity extends RecyclerView.Adapter<WalkingActivity.ViewHo
     // binds the data to the TextView in each row
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Walks walk = mData.get(position);
+        Walk walk = mData.get(position);
         holder.title.setText(walk.getTitle());
         holder.numSteps.setText(MessageFormat.format("{0} Steps",String.valueOf(walk.getNumSteps())));
     }

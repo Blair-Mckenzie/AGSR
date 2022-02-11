@@ -1,10 +1,10 @@
 package com.example.agsr;
 
-public class Walks {
+public class Walk {
     private final String title;
     private final int numSteps;
 
-    public Walks(String title, int numSteps){
+    public Walk(String title, int numSteps){
         this.title = title;
         this.numSteps = numSteps;
     }

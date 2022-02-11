@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">AGSR</string>
     <string name="bottom_home_nav_text">Home</string>
-    <string name="bottom_profile_nav_text">Profile</string>
+    <string name="bottom_profile_nav_text">Targets</string>
     <string name="bottom_calendar_nav_text">Calendar</string>
     <string name="home_fragment_title">Current Goal</string>
     <string name="profile_fragment_message">Profile</string>
