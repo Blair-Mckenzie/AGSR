@@ -96,7 +96,6 @@ public class fragment_targets extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
-                        targetViewModel.delete(adapter.getCurrentList().get(1));
                     }
                 });
 
