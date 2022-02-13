@@ -1,64 +1,116 @@
 package com.example.agsr;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link fragment_targets#newInstance} factory method to
- * create an instance of this fragment.
- */
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
 public class fragment_targets extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private RecyclerView recyclerView;
+    private TargetViewModel targetViewModel;
+    TargetAdapter adapter;
 
     public fragment_targets() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment fragment_targets.
-     */
-    // TODO: Rename and change types and number of parameters
     public static fragment_targets newInstance(String param1, String param2) {
         fragment_targets fragment = new fragment_targets();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+
+    }
+
+    public void removeItem(int position) {
+        List<Target> currentList = adapter.getCurrentList();
+        currentList.remove(position);
+        adapter.submitList(currentList);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_targets, container, false);
+        View view = inflater.inflate(R.layout.fragment_targets, container, false);
+
+        recyclerView = view.findViewById(R.id.targets_recyclerview);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
+        recyclerView.setLayoutManager(layoutManager);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+                layoutManager.getOrientation());
+        recyclerView.addItemDecoration(dividerItemDecoration);
+
+        adapter = new TargetAdapter(new TargetAdapter.WordDiff());
+        recyclerView.setAdapter(adapter);
+        targetViewModel = new ViewModelProvider(this).get(TargetViewModel.class);
+        targetViewModel.getAllTargets().observe(getViewLifecycleOwner(), targets -> {
+            adapter.submitList(targets);
+        });
+//        targetViewModel.delete(adapter.getCurrentList().get(0));
+
+        FloatingActionButton addGoalButton = view.findViewById(R.id.fab);
+        addGoalButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Add New Goal");
+                View viewInflated = LayoutInflater.from(getContext()).inflate(R.layout.add_target_popup, (ViewGroup) getView(), false);
+
+                EditText titleInput = viewInflated.findViewById(R.id.target_title_input);
+                EditText stepsInput = viewInflated.findViewById(R.id.target_steps_input);
+
+                builder.setView(viewInflated);
+
+                builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        int numSteps = Integer.parseInt(stepsInput.getText().toString());
+                        targetViewModel.insert(new Target(titleInput.getText().toString(), numSteps, false));
+                    }
+                });
+                builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                        targetViewModel.delete(adapter.getCurrentList().get(1));
+                    }
+                });
+
+                builder.show();
+            }
+        });
+
+        adapter.setOnItemClickListener(new TargetAdapter.OnItemClickListener() {
+            @Override
+            public void onDeleteClick(int position) {
+                targetViewModel.delete(adapter.getCurrentList().get(position));
+            }
+        });
+        return view;
     }
+
 }

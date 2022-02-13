@@ -1,14 +1,19 @@
 <resources>
     <string name="app_name">AGSR</string>
     <string name="bottom_home_nav_text">Home</string>
-    <string name="bottom_profile_nav_text">Targets</string>
+    <string name="bottom_profile_nav_text">Goals</string>
     <string name="bottom_calendar_nav_text">Calendar</string>
     <string name="home_fragment_title">Current Goal</string>
-    <string name="profile_fragment_message">Profile</string>
+    <string name="profile_fragment_message">Walking Goals</string>
     <string name="calendar_fragment_message">Calendar</string>
     <string name="steps_input">Add Steps</string>
     <string name="enter_button_text">Enter</string>
     <string name="title_input">Activity Name</string>
     <string name="target_text">Default</string>
     <string name="delete_steps">Remove</string>
+    <string name="add_target">Add Target</string>
+    <string name="target_title_input">Goal Name</string>
+    <string name="target_num_steps_input">Number of Steps</string>
+    <string name="cancel_button_text">Cancel</string>
+    <string name="add_button_text">Add</string>
 </resources>

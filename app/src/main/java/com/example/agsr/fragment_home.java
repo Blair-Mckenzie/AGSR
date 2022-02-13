@@ -96,7 +96,6 @@ public class fragment_home extends Fragment {
         displayCurrentSteps = view.findViewById(R.id.text_view_steps_progress);
         displayPercentage = view.findViewById(R.id.text_view_progress_percentage);
         MaterialButton addStepsButton = view.findViewById(R.id.add_steps_button);
-        MaterialButton deleteButton = view.findViewById(R.id.delete_button);
         progressBar = view.findViewById(R.id.progress_bar);
 
         displayCurrentSteps.setText(MessageFormat.format("{0} / {1}",numSteps, goal ));
