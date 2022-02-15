@@ -32,6 +32,12 @@ public class AGSRRepository {
        new deleteTargetAsyncTask(targetDao).execute(target);
     }
 
+    void update(Target target) {
+        AGSRDatabase.databaseWriteExecutor.execute(() -> {
+            targetDao.update(target);
+        });
+    }
+
     private static class deleteTargetAsyncTask extends AsyncTask<Target, Void, Void> {
         private TargetDao mAsyncTaskDao;
 

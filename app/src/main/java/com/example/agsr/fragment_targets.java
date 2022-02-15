@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
@@ -17,10 +18,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.ArrayList;
-import java.util.List;
-
 
 public class fragment_targets extends Fragment {
 
@@ -44,12 +41,6 @@ public class fragment_targets extends Fragment {
 
     }
 
-    public void removeItem(int position) {
-        List<Target> currentList = adapter.getCurrentList();
-        currentList.remove(position);
-        adapter.submitList(currentList);
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -59,8 +50,7 @@ public class fragment_targets extends Fragment {
         recyclerView = view.findViewById(R.id.targets_recyclerview);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
         recyclerView.setLayoutManager(layoutManager);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
-                layoutManager.getOrientation());
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), layoutManager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
 
         adapter = new TargetAdapter(new TargetAdapter.WordDiff());
@@ -69,7 +59,6 @@ public class fragment_targets extends Fragment {
         targetViewModel.getAllTargets().observe(getViewLifecycleOwner(), targets -> {
             adapter.submitList(targets);
         });
-//        targetViewModel.delete(adapter.getCurrentList().get(0));
 
         FloatingActionButton addGoalButton = view.findViewById(R.id.fab);
         addGoalButton.setOnClickListener(new View.OnClickListener() {
@@ -78,12 +67,10 @@ public class fragment_targets extends Fragment {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setTitle("Add New Goal");
                 View viewInflated = LayoutInflater.from(getContext()).inflate(R.layout.add_target_popup, (ViewGroup) getView(), false);
-
                 EditText titleInput = viewInflated.findViewById(R.id.target_title_input);
                 EditText stepsInput = viewInflated.findViewById(R.id.target_steps_input);
 
                 builder.setView(viewInflated);
-
                 builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -98,7 +85,6 @@ public class fragment_targets extends Fragment {
                         dialog.cancel();
                     }
                 });
-
                 builder.show();
             }
         });
@@ -107,6 +93,37 @@ public class fragment_targets extends Fragment {
             @Override
             public void onDeleteClick(int position) {
                 targetViewModel.delete(adapter.getCurrentList().get(position));
+            }
+            @Override
+            public void onEditClick(int position){
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle("Edit Goal");
+                View viewInflated = LayoutInflater.from(getContext()).inflate(R.layout.add_target_popup, (ViewGroup) getView(), false);
+                EditText titleInput = viewInflated.findViewById(R.id.target_title_input);
+                EditText stepsInput = viewInflated.findViewById(R.id.target_steps_input);
+
+                TextView currentTitle = view.findViewById(R.id.target_title);
+                TextView currentSteps = view.findViewById(R.id.target_steps);
+
+                titleInput.setText(currentTitle.getText());
+                stepsInput.setText(currentSteps.getText().toString());
+                builder.setView(viewInflated);
+
+                builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        int numSteps = Integer.parseInt(stepsInput.getText().toString());
+                        targetViewModel.update(new Target(titleInput.getText().toString(), numSteps, false));
+                    }
+                });
+                builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
             }
         });
         return view;

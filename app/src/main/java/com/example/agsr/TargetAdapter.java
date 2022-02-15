@@ -23,6 +23,7 @@ public class TargetAdapter extends ListAdapter<Target,TargetAdapter.TargetViewHo
 
     public interface OnItemClickListener {
         void onDeleteClick(int position);
+        void onEditClick(int position);
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -49,6 +50,7 @@ public class TargetAdapter extends ListAdapter<Target,TargetAdapter.TargetViewHo
          TextView targetNumStepsView;
          Button addTargetButton;
          Button deleteButton;
+         Button editButton;
 
         TargetViewHolder(View itemView, final OnItemClickListener listener) {
             super(itemView);
@@ -56,6 +58,7 @@ public class TargetAdapter extends ListAdapter<Target,TargetAdapter.TargetViewHo
             targetNumStepsView = itemView.findViewById(R.id.target_steps);
             addTargetButton = itemView.findViewById(R.id.fab);
             deleteButton = itemView.findViewById(R.id.target_delete_button);
+            editButton = itemView.findViewById(R.id.target_edit_button);
 
             deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -64,6 +67,14 @@ public class TargetAdapter extends ListAdapter<Target,TargetAdapter.TargetViewHo
                     listener.onDeleteClick(position);
                 }
             });
+            editButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int position = getAdapterPosition();
+                    listener.onEditClick(position);
+                }
+            });
+
         }
     }
 

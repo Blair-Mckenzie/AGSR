@@ -90,8 +90,8 @@
 
     <ProgressBar
         android:id="@+id/progress_bar"
-        android:layout_width="212dp"
-        android:layout_height="216dp"
+        android:layout_width="243dp"
+        android:layout_height="234dp"
         android:layout_marginTop="4dp"
         android:indeterminateOnly="false"
         android:progressDrawable="@drawable/progress_bar"

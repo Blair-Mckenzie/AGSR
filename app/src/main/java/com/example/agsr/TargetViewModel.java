@@ -29,4 +29,8 @@ public class TargetViewModel extends AndroidViewModel {
     public void delete(Target target){
         repository.delete(target);
     }
+
+    public void update(Target target){
+        repository.update(target);
+    }
 }
