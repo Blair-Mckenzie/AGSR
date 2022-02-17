@@ -7,9 +7,9 @@ import androidx.room.PrimaryKey;
 
 @Entity(tableName = "target_table")
 public class Target {
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
+    private int id;
     @NonNull
-    @ColumnInfo(name = "target")
     private String title;
     private int numSteps;
     private boolean isActive;
@@ -43,5 +43,13 @@ public class Target {
 
     public void setActive(boolean active) {
         isActive = active;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }
