@@ -106,15 +106,18 @@ public class fragment_targets extends Fragment {
                 TextView currentSteps = view.findViewById(R.id.target_steps);
 
                 titleInput.setText(currentTitle.getText());
-                stepsInput.setText(currentSteps.getText().toString());
+                String currentStepsDisplay = currentSteps.getText().toString();
+                stepsInput.setText(currentStepsDisplay.substring(0,currentStepsDisplay.length()-6));
                 builder.setView(viewInflated);
 
                 builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        int numSteps = Integer.parseInt(stepsInput.getText().toString());
-                        targetViewModel.update(new Target(titleInput.getText().toString(), numSteps, false));
+                        Target updatedTarget = adapter.getCurrentList().get(position);
+                        updatedTarget.setTitle(titleInput.getText().toString());
+                        updatedTarget.setNumSteps(Integer.parseInt(stepsInput.getText().toString()));
+                        targetViewModel.update(updatedTarget);
                     }
                 });
                 builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {

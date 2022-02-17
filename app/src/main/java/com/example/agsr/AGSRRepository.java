@@ -33,9 +33,7 @@ public class AGSRRepository {
     }
 
     void update(Target target) {
-        AGSRDatabase.databaseWriteExecutor.execute(() -> {
-            targetDao.update(target);
-        });
+        new updateTargetAsyncTask(targetDao).execute(target);
     }
 
     private static class deleteTargetAsyncTask extends AsyncTask<Target, Void, Void> {
@@ -48,6 +46,20 @@ public class AGSRRepository {
         @Override
         protected Void doInBackground(Target... targets) {
             mAsyncTaskDao.delete(targets[0]);
+            return null;
+        }
+    }
+
+    private static class updateTargetAsyncTask extends AsyncTask<Target, Void, Void> {
+        private TargetDao mAsyncTaskDao;
+
+        updateTargetAsyncTask(TargetDao dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(Target... targets) {
+            mAsyncTaskDao.update(targets[0]);
             return null;
         }
     }
