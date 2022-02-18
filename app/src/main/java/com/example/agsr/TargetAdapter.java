@@ -24,6 +24,7 @@ public class TargetAdapter extends ListAdapter<Target,TargetAdapter.TargetViewHo
     public interface OnItemClickListener {
         void onDeleteClick(int position);
         void onEditClick(int position);
+        void onLongClick(int position);
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -74,11 +75,18 @@ public class TargetAdapter extends ListAdapter<Target,TargetAdapter.TargetViewHo
                     listener.onEditClick(position);
                 }
             });
-
+            itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    int position = getAdapterPosition();
+                    listener.onLongClick(position);
+                    return true;
+                }
+            });
         }
     }
 
-    static class WordDiff extends DiffUtil.ItemCallback<Target> {
+    static class TargetDiff extends DiffUtil.ItemCallback<Target> {
 
         @Override
         public boolean areItemsTheSame(@NonNull Target oldItem, @NonNull Target newItem) {
