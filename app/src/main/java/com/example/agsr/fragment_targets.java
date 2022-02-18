@@ -142,16 +142,14 @@ public class fragment_targets extends Fragment {
                     }else{
                         if (type == 'a') {
                             int numSteps = Integer.parseInt(stepsInput.getText().toString());
-                            targetViewModel.insert(new Target(titleInput.getText().toString(), numSteps, false));
+                            targetViewModel.insert(new Target(titleInput.getText().toString().trim(), numSteps, false));
                         } else {
                             Target updatedTarget = adapter.getCurrentList().get(position);
-                            updatedTarget.setTitle(titleInput.getText().toString());
+                            updatedTarget.setTitle(titleInput.getText().toString().trim());
                             updatedTarget.setNumSteps(Integer.parseInt(stepsInput.getText().toString()));
                             targetViewModel.update(updatedTarget);
                         }
                     }
-
-
                 }
             }
         });
@@ -160,7 +158,7 @@ public class fragment_targets extends Fragment {
     private boolean isDuplicate(String newTitle) {
         List<Target> currentList = adapter.getCurrentList();
         for (int i = 0; i < currentList.size(); i++) {
-            if (currentList.get(i).getTitle().equals(newTitle)) {
+            if (currentList.get(i).getTitle().toLowerCase().equals(newTitle.trim().toLowerCase())) {
                 return true;
             }
         }
