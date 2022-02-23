@@ -8,76 +8,81 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
 
-public class WalkingAdapter extends RecyclerView.Adapter<WalkingAdapter.ViewHolder> {
+public class WalkingAdapter extends ListAdapter<Walk,WalkingAdapter.WalkViewHolder> {
 
-    private ArrayList<Walk> mData;
-    private LayoutInflater mInflater;
+    private WalkingAdapter.OnItemClickListener listener;
+    WalkingAdapter(@NonNull DiffUtil.ItemCallback<Walk> diffCallback){
+        super(diffCallback);
+    }
+
+    public interface OnItemClickListener {
+        void onDeleteClick(int position);
+    }
+
+    public void setOnItemClickListener(WalkingAdapter.OnItemClickListener listener) {
+        this.listener = listener;
+    }
     ProgressBar progressBar;
     TextView currentSteps;
     TextView displayPercentage;
 
 
-    // data is passed into the constructor
-    WalkingAdapter(Context context, ArrayList<Walk> data) {
-        this.mInflater = LayoutInflater.from(context);
-        this.mData = data;
-    }
-
-    // inflates the row layout from xml when needed
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.walking_activity, parent, false);
-        progressBar = view.findViewById(R.id.progress_bar);
-        currentSteps = view.findViewById(R.id.text_view_steps_progress);
-        displayPercentage = view.findViewById(R.id.text_view_progress_percentage);
-        return new ViewHolder(view);
+    public WalkViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.walking_item, parent, false);
+        WalkViewHolder wvh = new WalkViewHolder(view,listener);
+        return wvh;
     }
 
-    // binds the data to the TextView in each row
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        Walk walk = mData.get(position);
-        holder.title.setText(walk.getTitle());
-        holder.numSteps.setText(MessageFormat.format("{0} Steps",String.valueOf(walk.getNumSteps())));
+    public void onBindViewHolder(@NonNull WalkViewHolder holder, int position) {
+        Walk walk = getItem(position);
+        holder.walkTitleView.setText(walk.getTitle());
+        holder.walkNumStepsView.setText(MessageFormat.format("{0} Steps",String.valueOf(walk.getNumSteps())));
+
     }
 
-    // total number of rows
-    @Override
-    public int getItemCount() {
-        return mData.size();
-    }
-
-    private void removeAt(int position) {
-        mData.remove(position);
-        notifyItemRemoved(position);
-        notifyItemRangeChanged(position, mData.size());
-    }
-    // stores and recycles views as they are scrolled off screen
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        TextView title;
-        TextView numSteps;
+    public class WalkViewHolder extends RecyclerView.ViewHolder {
+        TextView walkTitleView;
+        TextView walkNumStepsView;
+        Button addWalkButton;
         Button deleteButton;
 
-        ViewHolder(View itemView) {
+        WalkViewHolder(View itemView, final WalkingAdapter.OnItemClickListener listener) {
             super(itemView);
-            title = itemView.findViewById(R.id.activity_name);
-            numSteps = itemView.findViewById(R.id.num_steps);
-            deleteButton = itemView.findViewById(R.id.delete_button);
+            walkTitleView = itemView.findViewById(R.id.activity_name);
+            walkNumStepsView = itemView.findViewById(R.id.walk_num_steps);
+            addWalkButton = itemView.findViewById(R.id.add_steps_button);
+            deleteButton = itemView.findViewById(R.id.walk_delete_button);
 
             deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    fragment_home.setNumSteps(fragment_home.getNumSteps()- mData.get(getAdapterPosition()).getNumSteps()); ;
-                    fragment_home.setProg(((double) fragment_home.getNumSteps() / (double)fragment_home.getGoal() * 100));
-                    fragment_home.updateProgressBar();
-                    removeAt(getAdapterPosition());
+                    int position = getAdapterPosition();
+                    listener.onDeleteClick(position);
                 }
             });
+        }
+    }
+    static class TargetDiff extends DiffUtil.ItemCallback<Walk> {
+
+        @Override
+        public boolean areItemsTheSame(@NonNull Walk oldItem, @NonNull Walk newItem) {
+            return oldItem == newItem;
+        }
+
+        @Override
+        public boolean areContentsTheSame(@NonNull Walk oldItem, @NonNull Walk newItem) {
+            return oldItem.getTitle().equals(newItem.getTitle());
         }
     }
 }

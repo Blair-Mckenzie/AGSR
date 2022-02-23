@@ -3,6 +3,7 @@ package com.example.agsr;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,9 +27,10 @@ import java.util.ArrayList;
  * create an instance of this fragment.
  */
 public class fragment_home extends Fragment {
-    private final String KEY_RECYCLER_STATE = "recycler_state";
-    private static Bundle bundleRecyclerViewState;
+
     private RecyclerView recyclerView;
+    private WalkViewModel walkViewModel;
+    WalkingAdapter adapter;
 
     private static int numSteps = 0;
     private static double prog = 0.0;
@@ -37,11 +39,6 @@ public class fragment_home extends Fragment {
     private static ProgressBar  progressBar;
     private static TextView displayCurrentSteps;
     private static TextView displayPercentage;
-
-    WalkingAdapter adapter;
-    Parcelable state;
-
-
 
     public fragment_home() {
         // Required empty public constructor
@@ -58,38 +55,22 @@ public class fragment_home extends Fragment {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        bundleRecyclerViewState = new Bundle();
-        state = recyclerView.getLayoutManager().onSaveInstanceState();
-        bundleRecyclerViewState.putParcelable(KEY_RECYCLER_STATE, state);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (bundleRecyclerViewState != null){
-            state = bundleRecyclerViewState.getParcelable(KEY_RECYCLER_STATE);
-            recyclerView.getLayoutManager().onRestoreInstanceState(state);
-        }
-
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-
-        ArrayList<Walk> walks = new ArrayList<>();
         recyclerView = view.findViewById(R.id.walking_list);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
         recyclerView.setLayoutManager(layoutManager);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
-                layoutManager.getOrientation());
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), layoutManager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
-        adapter = new WalkingAdapter(this.getContext(), walks);
+
+        adapter = new WalkingAdapter(new WalkingAdapter.TargetDiff());
         recyclerView.setAdapter(adapter);
+        walkViewModel = new ViewModelProvider(this).get(WalkViewModel.class);
+        walkViewModel.getAllWalks().observe(getViewLifecycleOwner(), walks -> {
+            adapter.submitList(walks);
+        });
 
         EditText addStepsTextview = view.findViewById(R.id.steps_input);
         EditText addActivityName = view.findViewById(R.id.activity_name_input);
@@ -115,9 +96,15 @@ public class fragment_home extends Fragment {
                 } else {
                     numSteps += Integer.parseInt((addStepsTextview.getText().toString()));
                     updateProgressBar();
-                    walks.add(0,new Walk(addActivityName.getText().toString(),Integer.parseInt(addStepsTextview.getText().toString())));
-                    adapter.notifyItemInserted(0);
+                    walkViewModel.insert(new Walk(addActivityName.getText().toString(),Integer.parseInt(addStepsTextview.getText().toString()),numSteps));
                 }
+            }
+        });
+
+        adapter.setOnItemClickListener(new WalkingAdapter.OnItemClickListener() {
+            @Override
+            public void onDeleteClick(int position) {
+                walkViewModel.delete(adapter.getCurrentList().get(position));
             }
         });
         return view;
@@ -131,18 +118,6 @@ public class fragment_home extends Fragment {
     }
     private boolean isEmptyInput (EditText editText){
         return editText.getText().toString().length() == 0;
-    }
-    public static int getNumSteps() {
-        return numSteps;
-    }
-    public static void setNumSteps(int numSteps) {
-        fragment_home.numSteps = numSteps;
-    }
-    public static void setProg(double prog) {
-        fragment_home.prog = prog;
-    }
-    public static int getGoal() {
-        return goal;
     }
 
 }
