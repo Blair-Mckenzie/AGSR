@@ -1,5 +1,10 @@
 package com.example.agsr;
 
+import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,14 +15,15 @@ import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
 
+import java.text.BreakIterator;
 import java.text.MessageFormat;
-import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,9 +39,12 @@ public class fragment_home extends Fragment {
     public static int numSteps;
     private static int goal = 10000;
 
+    String message;
+    Target activeTarget;
     private ProgressBar progressBar;
     private TextView displayCurrentSteps;
     private TextView displayPercentage;
+    private TextView goalName;
 
     public fragment_home() {
         // Required empty public constructor
@@ -57,11 +66,15 @@ public class fragment_home extends Fragment {
             numSteps = 0;
         }
         updateProgressBar();
+        if(activeTarget != null){
+        }
+
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        LocalBroadcastManager.getInstance(this.getContext()).registerReceiver(receiver, new IntentFilter("sendData"));
     }
 
     @Override
@@ -109,7 +122,10 @@ public class fragment_home extends Fragment {
         displayPercentage = view.findViewById(R.id.text_view_progress_percentage);
         MaterialButton addStepsButton = view.findViewById(R.id.add_steps_button);
         progressBar = view.findViewById(R.id.progress_bar);
-        TextView goalName = view.findViewById(R.id.current_goal_textview);
+        goalName = view.findViewById(R.id.current_goal_textview);
+////        if(activeTarget != null){
+//            goalName.setText(activeTarget.getTitle());
+////        }
 
         if (adapter.getCurrentList().size() != 0) {
             numSteps = adapter.getCurrentList().get(adapter.getCurrentList().size() - 1).getCurrentSteps();
@@ -137,7 +153,10 @@ public class fragment_home extends Fragment {
             numSteps -= adapter.getCurrentList().get(position).getNumSteps();
             updateProgressBar();
             walkViewModel.delete(adapter.getCurrentList().get(position));
+//            System.out.println(activeTarget.getTitle());
+//            System.out.println(message);
         });
+
         return view;
     }
 
@@ -151,5 +170,17 @@ public class fragment_home extends Fragment {
     private boolean isEmptyInput(EditText editText) {
         return editText.getText().toString().length() == 0;
     }
+
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            activeTarget = (Target) intent.getSerializableExtra("target");
+            if(activeTarget != null){
+                goalName.setText(activeTarget.getTitle());
+                goal = activeTarget.getNumSteps();
+                updateProgressBar();
+            }
+        }
+    };
 
 }

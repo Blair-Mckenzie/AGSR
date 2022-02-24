@@ -1,7 +1,10 @@
 package com.example.agsr;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,15 +14,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,6 +36,7 @@ public class fragment_targets extends Fragment {
     TargetAdapter adapter;
 
     private int activeTarget = -1;
+    private String Targets;
 
     public fragment_targets() {
         // Required empty public constructor
@@ -44,11 +51,24 @@ public class fragment_targets extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        if (savedInstanceState != null) {
+        activeTarget = savedInstanceState.getInt("position");
+        }
     }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
+        List<Target> currentList = adapter.getCurrentList();
+        if (currentList.size() != 0) {
+            for (int i = 0; i < currentList.size(); i++) {
+                if (currentList.get(i).isActive()) {
+                    activeTarget = i;
+                }
+            }
+        }
+//        sendData();
+        sendData(currentList.get(activeTarget));
+        outState.putInt("position",activeTarget);
         super.onSaveInstanceState(outState);
     }
 
@@ -61,19 +81,6 @@ public class fragment_targets extends Fragment {
                 View v = Objects.requireNonNull(recyclerView.findViewHolderForAdapterPosition(activeTarget)).itemView;
                 LinearLayout goalLayout = v.findViewById(R.id.target_layout);
                 goalLayout.setBackgroundColor(Color.parseColor("#DBE1FF"));
-            }
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        List<Target> currentList = adapter.getCurrentList();
-        if (currentList.size() != 0) {
-            for (int i = 0; i < currentList.size(); i++) {
-                if (currentList.get(i).isActive()) {
-                    activeTarget = i;
-                }
             }
         }
     }
@@ -97,24 +104,6 @@ public class fragment_targets extends Fragment {
             public void onEditClick(int position) {
                 showPopupDialog("Edit Goal", 'e', view, position);
             }
-
-//            @Override
-//            public void onClick(int position) {
-//                View v = Objects.requireNonNull(recyclerView.findViewHolderForAdapterPosition(position)).itemView;
-//                LinearLayout goalLayout = v.findViewById(R.id.target_layout);
-//                if (position == recyclerView.findViewHolderForAdapterPosition(position).getAdapterPosition()) {
-//                    goalLayout.setBackgroundColor(Color.parseColor("#DBE1FF"));
-//                } else {
-//                    goalLayout.setBackgroundColor(Color.parseColor("#FFFFFF"));
-//                }
-
-
-//                goalLayout.setSelected(true);
-//                goalLayout.setBackgroundColor(Color.parseColor("#DBE1FF"));
-//                Target currentTarget = adapter.getCurrentList().get(position);
-//                currentTarget.setActive(true);
-//                targetViewModel.update(currentTarget);
-//            }
         });
         return view;
 
@@ -211,5 +200,11 @@ public class fragment_targets extends Fragment {
         targetViewModel.getAllTargets().observe(getViewLifecycleOwner(), targets -> adapter.submitList(targets));
         return view;
     }
+    private void sendData(Target target){
+        Intent intent = new Intent("sendData");
+        intent.putExtra("target", target);
+        LocalBroadcastManager.getInstance(this.getContext()).sendBroadcast(intent);
+    }
+
 
 }
