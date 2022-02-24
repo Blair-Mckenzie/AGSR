@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -24,6 +26,7 @@ import com.google.android.material.button.MaterialButton;
 
 import java.text.BreakIterator;
 import java.text.MessageFormat;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -66,40 +69,29 @@ public class fragment_home extends Fragment {
             numSteps = 0;
         }
         updateProgressBar();
-        if(activeTarget != null){
-        }
 
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        List<Walk> currentList = adapter.getCurrentList();
+        if (currentList.size() != 0) {
+           numSteps = currentList.get(currentList.size()-1).getCurrentSteps();
+        }
+        outState.putInt("steps",numSteps);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LocalBroadcastManager.getInstance(this.getContext()).registerReceiver(receiver, new IntentFilter("sendData"));
+//        if(sharedPref != null){
+//            numSteps = sharedPref.getInt("currentSteps",0);
+//            updateProgressBar();
+//        }
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        if (adapter.getCurrentList().size() != 0) {
-            numSteps = adapter.getCurrentList().get(adapter.getCurrentList().size() - 1).getCurrentSteps();
-        }
-        else{
-            numSteps = 0;
-        }
-        updateProgressBar();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (adapter.getCurrentList().size() != 0) {
-            numSteps = adapter.getCurrentList().get(adapter.getCurrentList().size() - 1).getCurrentSteps();
-        }
-        else{
-            numSteps = 0;
-        }
-        updateProgressBar();
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -153,8 +145,6 @@ public class fragment_home extends Fragment {
             numSteps -= adapter.getCurrentList().get(position).getNumSteps();
             updateProgressBar();
             walkViewModel.delete(adapter.getCurrentList().get(position));
-//            System.out.println(activeTarget.getTitle());
-//            System.out.println(message);
         });
 
         return view;
@@ -162,7 +152,7 @@ public class fragment_home extends Fragment {
 
     public void updateProgressBar() {
         double prog = (((double) numSteps / (double) goal) * 100);
-        progressBar.setProgress((int) prog);
+        progressBar.setProgress((int) prog,true);
         displayCurrentSteps.setText(MessageFormat.format("{0} / {1}", String.valueOf(numSteps), goal));
         displayPercentage.setText(MessageFormat.format("{0} %", String.valueOf(Math.round(prog))));
     }

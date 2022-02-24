@@ -8,6 +8,7 @@ import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -52,7 +53,7 @@ public class fragment_targets extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState != null) {
-        activeTarget = savedInstanceState.getInt("position");
+            activeTarget = savedInstanceState.getInt("position");
         }
     }
 
@@ -66,7 +67,6 @@ public class fragment_targets extends Fragment {
                 }
             }
         }
-//        sendData();
         sendData(currentList.get(activeTarget));
         outState.putInt("position",activeTarget);
         super.onSaveInstanceState(outState);
@@ -80,6 +80,10 @@ public class fragment_targets extends Fragment {
             if(activeTarget != -1){
                 View v = Objects.requireNonNull(recyclerView.findViewHolderForAdapterPosition(activeTarget)).itemView;
                 LinearLayout goalLayout = v.findViewById(R.id.target_layout);
+                Button deleteButton = v.findViewById(R.id.target_delete_button);
+                Button editButton = v.findViewById(R.id.target_edit_button);
+                deleteButton.setVisibility(View.INVISIBLE);
+                editButton.setVisibility(View.INVISIBLE);
                 goalLayout.setBackgroundColor(Color.parseColor("#DBE1FF"));
             }
         }

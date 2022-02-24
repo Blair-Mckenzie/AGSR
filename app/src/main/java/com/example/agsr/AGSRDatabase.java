@@ -36,23 +36,24 @@ public abstract class AGSRDatabase  extends RoomDatabase {
 //        @Override
 //        public void onCreate(@NonNull SupportSQLiteDatabase db) {
 //            super.onCreate(db);
-//            WalkDao dao = INSTANCE.walkDao();
-//            List<Walk> walks= dao.getWalks().getValue();
-//            fragment_home.numSteps = walks.get(walks.size()-1).getCurrentSteps();
-//            fragment_home.updateProgressBar();
+//
 //////            // If you want to keep data through app restarts,
 //////            // comment out the following block
-////            databaseWriteExecutor.execute(() -> {
+//            databaseWriteExecutor.execute(() -> {
 ////                // Populate the database in the background.
 ////                // If you want to start with more words, just add them.
 ////
+//                TargetDao dao = INSTANCE.targetDao();
+//                Target defaultTarget = new Target("Default",10000,true);
+//                dao.insert(defaultTarget);
+//
 //////                dao.deleteAll();
 //////
 //////                Target target1 = new Target("Ambitious",10000,false);
 //////                dao.insert(target1);
 //////                Target target2 = new Target("Lazy as fuck",1000,false);
 //////                dao.insert(target2);
-////            });
+//            });
 //        }
 //    };
 }

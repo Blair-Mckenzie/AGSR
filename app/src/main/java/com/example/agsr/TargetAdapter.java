@@ -50,9 +50,13 @@ public class TargetAdapter extends ListAdapter<Target, TargetAdapter.TargetViewH
         holder.targetNumStepsView.setText(MessageFormat.format("{0} Steps", String.valueOf(target.getNumSteps())));
         if (selectedPosition == holder.getAdapterPosition()) {
             holder.targetLayout.setBackgroundColor(Color.parseColor("#DBE1FF"));
+            holder.deleteButton.setVisibility(View.INVISIBLE);
+            holder.editButton.setVisibility(View.INVISIBLE);
             target.setActive(true);
         } else {
             holder.targetLayout.setBackgroundColor(Color.parseColor("#FFFFFF"));
+            holder.deleteButton.setVisibility(View.VISIBLE);
+            holder.editButton.setVisibility(View.VISIBLE);
             target.setActive(false);
         }
         fragment_targets.targetViewModel.update(target);
