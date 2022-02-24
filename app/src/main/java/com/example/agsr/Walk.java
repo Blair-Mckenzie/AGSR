@@ -13,12 +13,13 @@ public class Walk {
     private int numSteps;
     private int currentSteps;
 
-    public Walk(String title, int numSteps, int currentSteps) {
+    public Walk(@NonNull String title, int numSteps, int currentSteps) {
         this.title = title;
         this.numSteps = numSteps;
         this.currentSteps = currentSteps;
     }
 
+    @NonNull
     public String getTitle() {
         return title;
     }

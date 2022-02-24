@@ -28,90 +28,23 @@ public class AGSRRepository {
     }
 
     void insert(Target target) {
-        AGSRDatabase.databaseWriteExecutor.execute(() -> {
-            targetDao.insert(target);
-        });
+        AGSRDatabase.databaseWriteExecutor.execute(() -> targetDao.insert(target));
     }
-
-    void delete(Target target) {
-       new deleteTargetAsyncTask(targetDao).execute(target);
-    }
-
     void update(Target target) {
-        new updateTargetAsyncTask(targetDao).execute(target);
+        AGSRDatabase.databaseWriteExecutor.execute(() -> targetDao.update(target));
     }
-
-    private static class deleteTargetAsyncTask extends AsyncTask<Target, Void, Void> {
-        private TargetDao mAsyncTaskDao;
-
-        deleteTargetAsyncTask(TargetDao dao) {
-            mAsyncTaskDao = dao;
-        }
-
-        @Override
-        protected Void doInBackground(Target... targets) {
-            mAsyncTaskDao.delete(targets[0]);
-            return null;
-        }
+    void delete(Target target) {
+        AGSRDatabase.databaseWriteExecutor.execute(() -> targetDao.delete(target));
     }
-
-    private static class updateTargetAsyncTask extends AsyncTask<Target, Void, Void> {
-        private TargetDao mAsyncTaskDao;
-
-        updateTargetAsyncTask(TargetDao dao) {
-            mAsyncTaskDao = dao;
-        }
-
-        @Override
-        protected Void doInBackground(Target... targets) {
-            mAsyncTaskDao.update(targets[0]);
-            return null;
-        }
-    }
-
 
     LiveData<List<Walk>> getAllWalks(){
         return allWalks;
     }
     void insert(Walk walk) {
-        AGSRDatabase.databaseWriteExecutor.execute(() -> {
-            walkDao.insert(walk);
-        });
+        AGSRDatabase.databaseWriteExecutor.execute(() -> walkDao.insert(walk));
     }
-
     void delete(Walk walk) {
-        new deleteWalkAsyncTask(walkDao).execute(walk);
+        AGSRDatabase.databaseWriteExecutor.execute(() -> walkDao.delete(walk));
     }
 
-    void update(Walk walk) {
-        new updateWalkAsyncTask(walkDao).execute(walk);
-    }
-
-    private static class deleteWalkAsyncTask extends AsyncTask<Walk, Void, Void> {
-        private WalkDao mAsyncTaskDao;
-
-        deleteWalkAsyncTask(WalkDao dao) {
-            mAsyncTaskDao = dao;
-        }
-
-        @Override
-        protected Void doInBackground(Walk... walks) {
-            mAsyncTaskDao.delete(walks[0]);
-            return null;
-        }
-    }
-
-    private static class updateWalkAsyncTask extends AsyncTask<Walk, Void, Void> {
-        private WalkDao mAsyncTaskDao;
-
-        updateWalkAsyncTask(WalkDao dao) {
-            mAsyncTaskDao = dao;
-        }
-
-        @Override
-        protected Void doInBackground(Walk... walks) {
-            mAsyncTaskDao.update(walks[0]);
-            return null;
-        }
-    }
 }

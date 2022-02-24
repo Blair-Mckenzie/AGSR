@@ -30,10 +30,6 @@ public class WalkingAdapter extends ListAdapter<Walk,WalkingAdapter.WalkViewHold
     public void setOnItemClickListener(WalkingAdapter.OnItemClickListener listener) {
         this.listener = listener;
     }
-    ProgressBar progressBar;
-    TextView currentSteps;
-    TextView displayPercentage;
-
 
     @NonNull
     @Override
@@ -77,12 +73,14 @@ public class WalkingAdapter extends ListAdapter<Walk,WalkingAdapter.WalkViewHold
 
         @Override
         public boolean areItemsTheSame(@NonNull Walk oldItem, @NonNull Walk newItem) {
-            return oldItem == newItem;
+            return oldItem.getId() == newItem.getId();
         }
 
         @Override
         public boolean areContentsTheSame(@NonNull Walk oldItem, @NonNull Walk newItem) {
-            return oldItem.getTitle().equals(newItem.getTitle());
+            return oldItem.getTitle().equals(newItem.getTitle())&&
+                    oldItem.getNumSteps() == newItem.getNumSteps()&&
+                    oldItem.getCurrentSteps() == newItem.getCurrentSteps();
         }
     }
 }

@@ -53,4 +53,5 @@
     <color name="md_theme_dark_primaryInverse">#4359A9</color>
     <color name="seed">#656F9A</color>
     <color name="error">#BA1B1B</color>
+    <drawable name="selected_color">#DBE1FF</drawable>
 </resources>

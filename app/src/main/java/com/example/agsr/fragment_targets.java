@@ -29,8 +29,10 @@ import java.util.Objects;
 public class fragment_targets extends Fragment {
 
     private RecyclerView recyclerView;
-    private TargetViewModel targetViewModel;
+    public static TargetViewModel targetViewModel;
     TargetAdapter adapter;
+
+    private int selectedPosition = -1;
 
     public fragment_targets() {
         // Required empty public constructor
@@ -73,15 +75,23 @@ public class fragment_targets extends Fragment {
                 showPopupDialog("Edit Goal", 'e', view, position);
             }
 
-            @Override
-            public void onLongClick(int position) {
+//            @Override
+//            public void onClick(int position) {
 //                View v = Objects.requireNonNull(recyclerView.findViewHolderForAdapterPosition(position)).itemView;
-//                LinearLayout goalLayout= v.findViewById(R.id.target_layout);
-//                goalLayout.setBackgroundColor(Color.parseColor("#4359A9"));
+//                LinearLayout goalLayout = v.findViewById(R.id.target_layout);
+//                if (position == recyclerView.findViewHolderForAdapterPosition(position).getAdapterPosition()) {
+//                    goalLayout.setBackgroundColor(Color.parseColor("#DBE1FF"));
+//                } else {
+//                    goalLayout.setBackgroundColor(Color.parseColor("#FFFFFF"));
+//                }
+
+
+//                goalLayout.setSelected(true);
+//                goalLayout.setBackgroundColor(Color.parseColor("#DBE1FF"));
 //                Target currentTarget = adapter.getCurrentList().get(position);
 //                currentTarget.setActive(true);
 //                targetViewModel.update(currentTarget);
-            }
+//            }
         });
         return view;
 
@@ -137,18 +147,16 @@ public class fragment_targets extends Fragment {
             public void onClick(View v) {
                 if (!(checkDialogEmpty(titleInput, stepsInput))) {
                     dialog.dismiss();
-                    if (isDuplicate(titleInput.getText().toString())) {
+                    if(type == 'e'){
+                        Target updatedTarget = adapter.getCurrentList().get(position);
+                        updatedTarget.setTitle(titleInput.getText().toString().trim());
+                        updatedTarget.setNumSteps(Integer.parseInt(stepsInput.getText().toString()));
+                        targetViewModel.update(updatedTarget);
+                    } else if (isDuplicate(titleInput.getText().toString())) {
                         Toast.makeText(getContext(), "Goal Name Already Exists", Toast.LENGTH_LONG).show();
-                    }else{
-                        if (type == 'a') {
+                    } else {
                             int numSteps = Integer.parseInt(stepsInput.getText().toString());
                             targetViewModel.insert(new Target(titleInput.getText().toString().trim(), numSteps, false));
-                        } else {
-                            Target updatedTarget = adapter.getCurrentList().get(position);
-                            updatedTarget.setTitle(titleInput.getText().toString().trim());
-                            updatedTarget.setNumSteps(Integer.parseInt(stepsInput.getText().toString()));
-                            targetViewModel.update(updatedTarget);
-                        }
                     }
                 }
             }
@@ -165,7 +173,7 @@ public class fragment_targets extends Fragment {
         return false;
     }
 
-    private View setUpLayout(LayoutInflater inflater, ViewGroup container){
+    private View setUpLayout(LayoutInflater inflater, ViewGroup container) {
         View view = inflater.inflate(R.layout.fragment_targets, container, false);
 
         recyclerView = view.findViewById(R.id.targets_recyclerview);
