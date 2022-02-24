@@ -1,19 +1,6 @@
 package com.example.agsr;
 
-import android.content.Context;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,11 +8,15 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.button.MaterialButton;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -127,31 +118,25 @@ public class fragment_home extends Fragment {
         }
         updateProgressBar();
 
-        addStepsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (isEmptyInput(addStepsTextview) && isEmptyInput(addActivityName)) {
-                    addStepsTextview.setError("Required");
-                    addActivityName.setError("Required");
-                } else if (isEmptyInput(addStepsTextview)) {
-                    addStepsTextview.setError("Required");
-                } else if (isEmptyInput(addActivityName)) {
-                    addActivityName.setError("Required");
-                } else {
-                    numSteps += Integer.parseInt((addStepsTextview.getText().toString()));
-                    updateProgressBar();
-                    walkViewModel.insert(new Walk(addActivityName.getText().toString(), Integer.parseInt(addStepsTextview.getText().toString()), numSteps));
-                }
+        addStepsButton.setOnClickListener(view1 -> {
+            if (isEmptyInput(addStepsTextview) && isEmptyInput(addActivityName)) {
+                addStepsTextview.setError("Required");
+                addActivityName.setError("Required");
+            } else if (isEmptyInput(addStepsTextview)) {
+                addStepsTextview.setError("Required");
+            } else if (isEmptyInput(addActivityName)) {
+                addActivityName.setError("Required");
+            } else {
+                numSteps += Integer.parseInt((addStepsTextview.getText().toString()));
+                updateProgressBar();
+                walkViewModel.insert(new Walk(addActivityName.getText().toString(), Integer.parseInt(addStepsTextview.getText().toString()), numSteps));
             }
         });
 
-        adapter.setOnItemClickListener(new WalkingAdapter.OnItemClickListener() {
-            @Override
-            public void onDeleteClick(int position) {
-                numSteps -= adapter.getCurrentList().get(position).getNumSteps();
-                updateProgressBar();
-                walkViewModel.delete(adapter.getCurrentList().get(position));
-            }
+        adapter.setOnItemClickListener(position -> {
+            numSteps -= adapter.getCurrentList().get(position).getNumSteps();
+            updateProgressBar();
+            walkViewModel.delete(adapter.getCurrentList().get(position));
         });
         return view;
     }

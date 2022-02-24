@@ -9,9 +9,9 @@ public class Walk {
     @PrimaryKey(autoGenerate = true)
     private int id;
     @NonNull
-    private String title;
-    private int numSteps;
-    private int currentSteps;
+    private final String title;
+    private final int numSteps;
+    private final int currentSteps;
 
     public Walk(@NonNull String title, int numSteps, int currentSteps) {
         this.title = title;
@@ -32,10 +32,6 @@ public class Walk {
         return currentSteps;
     }
 
-    public void setTitle(@NonNull String title) {
-        this.title = title;
-    }
-
     public int getId() {
         return id;
     }
@@ -44,11 +40,4 @@ public class Walk {
         this.id = id;
     }
 
-    public void setNumSteps(int numSteps) {
-        this.numSteps = numSteps;
-    }
-
-    public void setCurrentSteps(int currentSteps) {
-        this.currentSteps = currentSteps;
-    }
 }

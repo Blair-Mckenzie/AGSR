@@ -58,16 +58,10 @@ public class TargetAdapter extends ListAdapter<Target, TargetAdapter.TargetViewH
             fragment_targets.targetViewModel.update(target);
             holder.targetLayout.setBackgroundColor(Color.parseColor("#FFFFFF"));
         }
-        holder.targetLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                selectedPosition = holder.getAdapterPosition();
-                notifyDataSetChanged();
-            }
+        holder.targetLayout.setOnClickListener(view -> {
+            selectedPosition = holder.getAdapterPosition();
+            notifyDataSetChanged();
         });
-
-
-//        holder.targetLayout.setBackgroundColor(Color.parseColor("#DBE1FF"));
     }
 
     public class TargetViewHolder extends RecyclerView.ViewHolder {
@@ -87,28 +81,14 @@ public class TargetAdapter extends ListAdapter<Target, TargetAdapter.TargetViewH
             deleteButton = itemView.findViewById(R.id.target_delete_button);
             editButton = itemView.findViewById(R.id.target_edit_button);
 
-            deleteButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    int position = getAdapterPosition();
-                    listener.onDeleteClick(position);
-                }
+            deleteButton.setOnClickListener(view -> {
+                int position = getAdapterPosition();
+                listener.onDeleteClick(position);
             });
-            editButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    int position = getAdapterPosition();
-                    listener.onEditClick(position);
-                }
+            editButton.setOnClickListener(view -> {
+                int position = getAdapterPosition();
+                listener.onEditClick(position);
             });
-//            itemView.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    int position = getAdapterPosition();
-//                    listener.onClick(position);
-////                    notifyDataSetChanged();
-//                }
-//            });
         }
     }
 

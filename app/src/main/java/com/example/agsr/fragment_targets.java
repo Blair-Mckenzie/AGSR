@@ -1,19 +1,14 @@
 package com.example.agsr;
 
-import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -51,18 +46,13 @@ public class fragment_targets extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = setUpLayout(inflater, container);
 
         FloatingActionButton addGoalButton = view.findViewById(R.id.fab);
-        addGoalButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showPopupDialog("Add New Goal", 'a', view, 0);
-            }
-        });
+        addGoalButton.setOnClickListener(view1 -> showPopupDialog("Add New Goal", 'a', view1, 0));
 
         adapter.setOnItemClickListener(new TargetAdapter.OnItemClickListener() {
             @Override
@@ -129,35 +119,33 @@ public class fragment_targets extends Fragment {
             builder.setView(viewInflated);
         }
         builder.setView(viewInflated);
-        builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
+        builder.setPositiveButton(android.R.string.ok, (dialog, which) -> {
         });
-        builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
+        builder.setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel());
         final AlertDialog dialog = builder.create();
         dialog.show();
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!(checkDialogEmpty(titleInput, stepsInput))) {
-                    dialog.dismiss();
-                    if(type == 'e'){
-                        Target updatedTarget = adapter.getCurrentList().get(position);
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            if (!(checkDialogEmpty(titleInput, stepsInput))) {
+                dialog.dismiss();
+                String newTitle = titleInput.getText().toString().trim();
+                if(type == 'e'){
+                    Target updatedTarget = adapter.getCurrentList().get(position);
+                    if(newTitle.equals(updatedTarget.getTitle())){
                         updatedTarget.setTitle(titleInput.getText().toString().trim());
                         updatedTarget.setNumSteps(Integer.parseInt(stepsInput.getText().toString()));
                         targetViewModel.update(updatedTarget);
-                    } else if (isDuplicate(titleInput.getText().toString())) {
+                    }else if (isDuplicate(newTitle)){
                         Toast.makeText(getContext(), "Goal Name Already Exists", Toast.LENGTH_LONG).show();
-                    } else {
-                            int numSteps = Integer.parseInt(stepsInput.getText().toString());
-                            targetViewModel.insert(new Target(titleInput.getText().toString().trim(), numSteps, false));
+                    }else{
+                        updatedTarget.setTitle(titleInput.getText().toString().trim());
+                        updatedTarget.setNumSteps(Integer.parseInt(stepsInput.getText().toString()));
+                        targetViewModel.update(updatedTarget);
                     }
+                } else if (isDuplicate(newTitle)) {
+                    Toast.makeText(getContext(), "Goal Name Already Exists", Toast.LENGTH_LONG).show();
+                } else {
+                        int numSteps = Integer.parseInt(stepsInput.getText().toString());
+                        targetViewModel.insert(new Target(newTitle, numSteps, false));
                 }
             }
         });
@@ -166,7 +154,7 @@ public class fragment_targets extends Fragment {
     private boolean isDuplicate(String newTitle) {
         List<Target> currentList = adapter.getCurrentList();
         for (int i = 0; i < currentList.size(); i++) {
-            if (currentList.get(i).getTitle().toLowerCase().equals(newTitle.trim().toLowerCase())) {
+            if (currentList.get(i).getTitle().equalsIgnoreCase(newTitle.trim())) {
                 return true;
             }
         }
@@ -185,9 +173,7 @@ public class fragment_targets extends Fragment {
         adapter = new TargetAdapter(new TargetAdapter.TargetDiff());
         recyclerView.setAdapter(adapter);
         targetViewModel = new ViewModelProvider(this).get(TargetViewModel.class);
-        targetViewModel.getAllTargets().observe(getViewLifecycleOwner(), targets -> {
-            adapter.submitList(targets);
-        });
+        targetViewModel.getAllTargets().observe(getViewLifecycleOwner(), targets -> adapter.submitList(targets));
         return view;
     }
 

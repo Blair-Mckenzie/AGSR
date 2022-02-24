@@ -1,11 +1,9 @@
 package com.example.agsr;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -14,7 +12,6 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 
 public class WalkingAdapter extends ListAdapter<Walk,WalkingAdapter.WalkViewHolder> {
 
@@ -35,8 +32,7 @@ public class WalkingAdapter extends ListAdapter<Walk,WalkingAdapter.WalkViewHold
     @Override
     public WalkViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.walking_item, parent, false);
-        WalkViewHolder wvh = new WalkViewHolder(view,listener);
-        return wvh;
+        return new WalkViewHolder(view,listener);
     }
 
     @Override
@@ -60,12 +56,9 @@ public class WalkingAdapter extends ListAdapter<Walk,WalkingAdapter.WalkViewHold
             addWalkButton = itemView.findViewById(R.id.add_steps_button);
             deleteButton = itemView.findViewById(R.id.walk_delete_button);
 
-            deleteButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    int position = getAdapterPosition();
-                    listener.onDeleteClick(position);
-                }
+            deleteButton.setOnClickListener(view -> {
+                int position = getAdapterPosition();
+                listener.onDeleteClick(position);
             });
         }
     }
