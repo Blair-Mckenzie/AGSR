@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.button.MaterialButton;
 
 import java.text.MessageFormat;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -109,7 +110,6 @@ public class fragment_home extends Fragment {
         MaterialButton addStepsButton = view.findViewById(R.id.add_steps_button);
         progressBar = view.findViewById(R.id.progress_bar);
         TextView goalName = view.findViewById(R.id.current_goal_textview);
-
 
         if (adapter.getCurrentList().size() != 0) {
             numSteps = adapter.getCurrentList().get(adapter.getCurrentList().size() - 1).getCurrentSteps();

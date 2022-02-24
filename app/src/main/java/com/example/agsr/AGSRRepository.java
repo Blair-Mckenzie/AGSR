@@ -9,11 +9,11 @@ import java.util.List;
 
 public class AGSRRepository {
 
-    private TargetDao targetDao;
-    private LiveData<List<Target>> allTargets;
+    private final TargetDao targetDao;
+    private final LiveData<List<Target>> allTargets;
 
-    private WalkDao walkDao;
-    private LiveData<List<Walk>> allWalks;
+    private final WalkDao walkDao;
+    private final LiveData<List<Walk>> allWalks;
 
     AGSRRepository(Application application) {
         AGSRDatabase db = AGSRDatabase.getDatabase(application);
@@ -26,7 +26,6 @@ public class AGSRRepository {
     LiveData<List<Target>> getAllTargets() {
         return allTargets;
     }
-
     void insert(Target target) {
         AGSRDatabase.databaseWriteExecutor.execute(() -> targetDao.insert(target));
     }

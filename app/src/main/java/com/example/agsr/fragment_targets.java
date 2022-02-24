@@ -1,10 +1,12 @@
 package com.example.agsr;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,7 +29,7 @@ public class fragment_targets extends Fragment {
     public static TargetViewModel targetViewModel;
     TargetAdapter adapter;
 
-    private int selectedPosition = -1;
+    private int activeTarget = -1;
 
     public fragment_targets() {
         // Required empty public constructor
@@ -43,6 +45,37 @@ public class fragment_targets extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        List<Target> currentList = adapter.getCurrentList();
+        if (currentList.size() != 0) {
+            if(activeTarget != -1){
+                View v = Objects.requireNonNull(recyclerView.findViewHolderForAdapterPosition(activeTarget)).itemView;
+                LinearLayout goalLayout = v.findViewById(R.id.target_layout);
+                goalLayout.setBackgroundColor(Color.parseColor("#DBE1FF"));
+            }
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        List<Target> currentList = adapter.getCurrentList();
+        if (currentList.size() != 0) {
+            for (int i = 0; i < currentList.size(); i++) {
+                if (currentList.get(i).isActive()) {
+                    activeTarget = i;
+                }
+            }
+        }
     }
 
     @Override
@@ -128,24 +161,26 @@ public class fragment_targets extends Fragment {
             if (!(checkDialogEmpty(titleInput, stepsInput))) {
                 dialog.dismiss();
                 String newTitle = titleInput.getText().toString().trim();
-                if(type == 'e'){
+                if (type == 'e') {
                     Target updatedTarget = adapter.getCurrentList().get(position);
-                    if(newTitle.equals(updatedTarget.getTitle())){
-                        updatedTarget.setTitle(titleInput.getText().toString().trim());
-                        updatedTarget.setNumSteps(Integer.parseInt(stepsInput.getText().toString()));
-                        targetViewModel.update(updatedTarget);
-                    }else if (isDuplicate(newTitle)){
+                    if (newTitle.equals(updatedTarget.getTitle())) {
+                        int id = updatedTarget.getId();
+                        Target target = new Target(titleInput.getText().toString().trim(),Integer.parseInt(stepsInput.getText().toString()),false);
+                        target.setId(id);
+                        targetViewModel.update(target);
+                    } else if (isDuplicate(newTitle)) {
                         Toast.makeText(getContext(), "Goal Name Already Exists", Toast.LENGTH_LONG).show();
-                    }else{
-                        updatedTarget.setTitle(titleInput.getText().toString().trim());
-                        updatedTarget.setNumSteps(Integer.parseInt(stepsInput.getText().toString()));
-                        targetViewModel.update(updatedTarget);
+                    } else {
+                        int id = updatedTarget.getId();
+                        Target target = new Target(titleInput.getText().toString().trim(),Integer.parseInt(stepsInput.getText().toString()),false);
+                        target.setId(id);
+                        targetViewModel.update(target);
                     }
                 } else if (isDuplicate(newTitle)) {
                     Toast.makeText(getContext(), "Goal Name Already Exists", Toast.LENGTH_LONG).show();
                 } else {
-                        int numSteps = Integer.parseInt(stepsInput.getText().toString());
-                        targetViewModel.insert(new Target(newTitle, numSteps, false));
+                    int numSteps = Integer.parseInt(stepsInput.getText().toString());
+                    targetViewModel.insert(new Target(newTitle, numSteps, false));
                 }
             }
         });
