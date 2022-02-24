@@ -1,11 +1,9 @@
 package com.example.agsr;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,8 +22,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
 
-import java.text.BreakIterator;
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -48,6 +47,11 @@ public class fragment_home extends Fragment {
     private TextView displayCurrentSteps;
     private TextView displayPercentage;
     private TextView goalName;
+
+    private TextView dateTimeDisplay;
+    private Calendar calendar;
+    private SimpleDateFormat dateFormat;
+    private String date;
 
     public fragment_home() {
         // Required empty public constructor
@@ -118,7 +122,11 @@ public class fragment_home extends Fragment {
 ////        if(activeTarget != null){
 //            goalName.setText(activeTarget.getTitle());
 ////        }
-
+        dateTimeDisplay = view.findViewById(R.id.date_view);
+        calendar = Calendar.getInstance();
+        dateFormat = new SimpleDateFormat("EEE  dd/MM/yyyy");
+        date = dateFormat.format(calendar.getTime());
+        dateTimeDisplay.setText(date);
         if (adapter.getCurrentList().size() != 0) {
             numSteps = adapter.getCurrentList().get(adapter.getCurrentList().size() - 1).getCurrentSteps();
         }else{

@@ -83,19 +83,20 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="14dp"
         android:text="@string/target_text"
-        android:textSize="18sp"
+        android:textSize="22sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/home_textview" />
 
     <ProgressBar
         android:id="@+id/progress_bar"
-        android:layout_width="243dp"
-        android:layout_height="234dp"
+        android:layout_width="210dp"
+        android:layout_height="206dp"
         android:layout_marginTop="4dp"
         android:indeterminateOnly="false"
         android:progressDrawable="@drawable/progress_bar"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/current_goal_textview"
         tools:progress="60">
@@ -125,8 +126,8 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/walking_list"
-        android:layout_width="377dp"
-        android:layout_height="176dp"
+        android:layout_width="match_parent"
+        android:layout_height="186dp"
         android:layout_marginHorizontal="16dp"
         android:layout_marginBottom="44dp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
@@ -134,5 +135,20 @@
         app:layout_constraintStart_toStartOf="@+id/linearLayout"
         app:layout_constraintTop_toBottomOf="@+id/progress_bar"
         app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/date_view"
+        android:layout_width="168dp"
+        android:layout_height="28dp"
+        android:layout_marginTop="8dp"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/walking_list"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progress_bar"
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
