@@ -12,7 +12,6 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -25,7 +24,6 @@ import com.google.android.material.button.MaterialButton;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -66,24 +64,15 @@ public class fragment_home extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (adapter.getCurrentList().size() != 0) {
-            numSteps = adapter.getCurrentList().get(adapter.getCurrentList().size() - 1).getCurrentSteps();
-        }
-        else{
-            numSteps = 0;
-        }
-        updateProgressBar();
-
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        List<Walk> currentList = adapter.getCurrentList();
-        if (currentList.size() != 0) {
-           numSteps = currentList.get(currentList.size()-1).getCurrentSteps();
-        }
-        outState.putInt("steps",numSteps);
-        super.onSaveInstanceState(outState);
+        recyclerView.postDelayed(() -> {
+            if (adapter.getCurrentList().size() != 0) {
+                numSteps = adapter.getCurrentList().get(adapter.getCurrentList().size() - 1).getCurrentSteps();
+            }
+            else{
+                numSteps = 0;
+            }
+            updateProgressBar();
+        },100);
     }
 
     @Override
@@ -95,7 +84,6 @@ public class fragment_home extends Fragment {
 //            updateProgressBar();
 //        }
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -119,9 +107,7 @@ public class fragment_home extends Fragment {
         MaterialButton addStepsButton = view.findViewById(R.id.add_steps_button);
         progressBar = view.findViewById(R.id.progress_bar);
         goalName = view.findViewById(R.id.current_goal_textview);
-////        if(activeTarget != null){
-//            goalName.setText(activeTarget.getTitle());
-////        }
+
         dateTimeDisplay = view.findViewById(R.id.date_view);
         calendar = Calendar.getInstance();
         dateFormat = new SimpleDateFormat("EEE  dd/MM/yyyy");
