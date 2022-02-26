@@ -3,8 +3,6 @@ package com.example.agsr;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +13,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -26,7 +23,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
@@ -34,10 +30,10 @@ public class fragment_targets extends Fragment {
 
     private RecyclerView recyclerView;
     public static TargetViewModel targetViewModel;
-    TargetAdapter adapter;
+    public TargetAdapter adapter;
 
     private int activeTarget = -1;
-    private String Targets;
+    private int selectedPosition = -1;
 
     public fragment_targets() {
         // Required empty public constructor
@@ -67,26 +63,30 @@ public class fragment_targets extends Fragment {
                 }
             }
         }
-        sendData(currentList.get(activeTarget));
-        outState.putInt("position",activeTarget);
+        if(activeTarget != -1){
+            sendData(currentList.get(activeTarget));
+            outState.putInt("position",activeTarget);
+        }
+
         super.onSaveInstanceState(outState);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        List<Target> currentList = adapter.getCurrentList();
-        if (currentList.size() != 0) {
-            if(activeTarget != -1){
-                View v = Objects.requireNonNull(recyclerView.findViewHolderForAdapterPosition(activeTarget)).itemView;
-                LinearLayout goalLayout = v.findViewById(R.id.target_layout);
-                Button deleteButton = v.findViewById(R.id.target_delete_button);
-                Button editButton = v.findViewById(R.id.target_edit_button);
-                deleteButton.setVisibility(View.INVISIBLE);
-                editButton.setVisibility(View.INVISIBLE);
-                goalLayout.setBackgroundColor(Color.parseColor("#DBE1FF"));
+        recyclerView.postDelayed(() -> {
+            List<Target> currentList = adapter.getCurrentList();
+            if (currentList.size() != 0) {
+                if(activeTarget != -1){
+                    highlightTarget(activeTarget);
+                    return;
+                }
+                if(currentList.get(0).getTitle().equals("Default")){
+                    highlightTarget(0);
+                }
             }
-        }
+        }, 100);
+
     }
 
     @Override
@@ -108,6 +108,12 @@ public class fragment_targets extends Fragment {
             public void onEditClick(int position) {
                 showPopupDialog("Edit Goal", 'e', view, position);
             }
+
+//            @Override
+//            public void onClick(int position){
+//
+//            }
+
         });
         return view;
 
@@ -210,5 +216,14 @@ public class fragment_targets extends Fragment {
         LocalBroadcastManager.getInstance(this.getContext()).sendBroadcast(intent);
     }
 
+    private void highlightTarget(int position){
+        View v = Objects.requireNonNull(recyclerView.findViewHolderForAdapterPosition(position)).itemView;
+        LinearLayout goalLayout = v.findViewById(R.id.target_layout);
+        Button deleteButton = v.findViewById(R.id.target_delete_button);
+        Button editButton = v.findViewById(R.id.target_edit_button);
+        deleteButton.setVisibility(View.INVISIBLE);
+        editButton.setVisibility(View.INVISIBLE);
+        goalLayout.setBackgroundColor(Color.parseColor("#DBE1FF"));
+    }
 
 }

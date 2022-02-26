@@ -40,7 +40,6 @@ public class WalkingAdapter extends ListAdapter<Walk,WalkingAdapter.WalkViewHold
         Walk walk = getItem(position);
         holder.walkTitleView.setText(walk.getTitle());
         holder.walkNumStepsView.setText(MessageFormat.format("{0} Steps",String.valueOf(walk.getNumSteps())));
-
     }
 
     public class WalkViewHolder extends RecyclerView.ViewHolder {

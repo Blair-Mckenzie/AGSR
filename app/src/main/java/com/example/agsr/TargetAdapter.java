@@ -45,9 +45,13 @@ public class TargetAdapter extends ListAdapter<Target, TargetAdapter.TargetViewH
 
     @Override
     public void onBindViewHolder(@NonNull TargetViewHolder holder, int position) {
-        Target target = getItem(position);
-        holder.targetTitleView.setText(target.getTitle());
-        holder.targetNumStepsView.setText(MessageFormat.format("{0} Steps", String.valueOf(target.getNumSteps())));
+        Target updatedTarget = getItem(position);
+        holder.targetTitleView.setText(updatedTarget.getTitle());
+        holder.targetNumStepsView.setText(MessageFormat.format("{0} Steps", String.valueOf(updatedTarget.getNumSteps())));
+        int id = updatedTarget.getId();
+        Target target = new Target(updatedTarget.getTitle(), updatedTarget.getNumSteps(), false);
+        target.setId(id);
+//        targetViewModel.update(target);
         if (selectedPosition == holder.getAdapterPosition()) {
             holder.targetLayout.setBackgroundColor(Color.parseColor("#DBE1FF"));
             holder.deleteButton.setVisibility(View.INVISIBLE);
@@ -62,6 +66,7 @@ public class TargetAdapter extends ListAdapter<Target, TargetAdapter.TargetViewH
         fragment_targets.targetViewModel.update(target);
         holder.targetLayout.setOnClickListener(view -> {
             selectedPosition = holder.getAdapterPosition();
+//            fragment_targets.targetViewModel.update(target);
             notifyDataSetChanged();
         });
     }
@@ -91,6 +96,11 @@ public class TargetAdapter extends ListAdapter<Target, TargetAdapter.TargetViewH
                 int position = getAdapterPosition();
                 listener.onEditClick(position);
             });
+//            targetLayout.setOnClickListener(view -> {
+//                int position = getAdapterPosition();
+//                listener.onClick(position);
+//            });
+
         }
     }
 

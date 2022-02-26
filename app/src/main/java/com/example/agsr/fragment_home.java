@@ -39,7 +39,6 @@ public class fragment_home extends Fragment {
     public static int numSteps;
     private static int goal = 10000;
 
-    String message;
     Target activeTarget;
     private ProgressBar progressBar;
     private TextView displayCurrentSteps;
@@ -67,22 +66,17 @@ public class fragment_home extends Fragment {
         recyclerView.postDelayed(() -> {
             if (adapter.getCurrentList().size() != 0) {
                 numSteps = adapter.getCurrentList().get(adapter.getCurrentList().size() - 1).getCurrentSteps();
-            }
-            else{
+            } else {
                 numSteps = 0;
             }
             updateProgressBar();
-        },100);
+        }, 100);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LocalBroadcastManager.getInstance(this.getContext()).registerReceiver(receiver, new IntentFilter("sendData"));
-//        if(sharedPref != null){
-//            numSteps = sharedPref.getInt("currentSteps",0);
-//            updateProgressBar();
-//        }
     }
 
     @Override
@@ -113,12 +107,6 @@ public class fragment_home extends Fragment {
         dateFormat = new SimpleDateFormat("EEE  dd/MM/yyyy");
         date = dateFormat.format(calendar.getTime());
         dateTimeDisplay.setText(date);
-        if (adapter.getCurrentList().size() != 0) {
-            numSteps = adapter.getCurrentList().get(adapter.getCurrentList().size() - 1).getCurrentSteps();
-        }else{
-            numSteps = 0;
-        }
-        updateProgressBar();
 
         addStepsButton.setOnClickListener(view1 -> {
             if (isEmptyInput(addStepsTextview) && isEmptyInput(addActivityName)) {
@@ -146,7 +134,7 @@ public class fragment_home extends Fragment {
 
     public void updateProgressBar() {
         double prog = (((double) numSteps / (double) goal) * 100);
-        progressBar.setProgress((int) prog,true);
+        progressBar.setProgress((int) prog, true);
         displayCurrentSteps.setText(MessageFormat.format("{0} / {1}", String.valueOf(numSteps), goal));
         displayPercentage.setText(MessageFormat.format("{0} %", String.valueOf(Math.round(prog))));
     }
@@ -159,7 +147,7 @@ public class fragment_home extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             activeTarget = (Target) intent.getSerializableExtra("target");
-            if(activeTarget != null){
+            if (activeTarget != null) {
                 goalName.setText(activeTarget.getTitle());
                 goal = activeTarget.getNumSteps();
                 updateProgressBar();

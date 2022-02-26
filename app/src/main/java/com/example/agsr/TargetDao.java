@@ -23,4 +23,7 @@ public interface TargetDao {
 
     @Query("SELECT * FROM target_table")
     LiveData<List<Target>> getTargets();
+
+    @Query("SELECT * FROM target_table")
+    public Target[] getAllTargets();
 }
