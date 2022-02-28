@@ -24,6 +24,7 @@ import com.google.android.material.button.MaterialButton;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -74,6 +75,13 @@ public class fragment_home extends Fragment {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        HistoryViewModel historyViewModel = new ViewModelProvider(getActivity()).get(HistoryViewModel.class);
+        historyViewModel.insert(new History(date,goalName.getText().toString(),goal,numSteps));
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LocalBroadcastManager.getInstance(this.getContext()).registerReceiver(receiver, new IntentFilter("sendData"));
@@ -104,7 +112,7 @@ public class fragment_home extends Fragment {
 
         dateTimeDisplay = view.findViewById(R.id.date_view);
         calendar = Calendar.getInstance();
-        dateFormat = new SimpleDateFormat("EEE  dd/MM/yyyy");
+        dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         date = dateFormat.format(calendar.getTime());
         dateTimeDisplay.setText(date);
 

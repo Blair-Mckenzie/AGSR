@@ -1,6 +1,5 @@
 package com.example.agsr;
 
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +18,6 @@ import java.text.MessageFormat;
 public class TargetAdapter extends ListAdapter<Target, TargetAdapter.TargetViewHolder> {
 
     private OnItemClickListener listener;
-    private int selectedPosition = -1;
 
     TargetAdapter(@NonNull DiffUtil.ItemCallback<Target> diffCallback) {
         super(diffCallback);
@@ -29,7 +27,7 @@ public class TargetAdapter extends ListAdapter<Target, TargetAdapter.TargetViewH
         void onDeleteClick(int position);
 
         void onEditClick(int position);
-//        void onClick(int position);
+        void onClick(int position);
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -45,30 +43,9 @@ public class TargetAdapter extends ListAdapter<Target, TargetAdapter.TargetViewH
 
     @Override
     public void onBindViewHolder(@NonNull TargetViewHolder holder, int position) {
-        Target updatedTarget = getItem(position);
-        holder.targetTitleView.setText(updatedTarget.getTitle());
-        holder.targetNumStepsView.setText(MessageFormat.format("{0} Steps", String.valueOf(updatedTarget.getNumSteps())));
-        int id = updatedTarget.getId();
-        Target target = new Target(updatedTarget.getTitle(), updatedTarget.getNumSteps(), false);
-        target.setId(id);
-//        targetViewModel.update(target);
-        if (selectedPosition == holder.getAdapterPosition()) {
-            holder.targetLayout.setBackgroundColor(Color.parseColor("#DBE1FF"));
-            holder.deleteButton.setVisibility(View.INVISIBLE);
-            holder.editButton.setVisibility(View.INVISIBLE);
-            target.setActive(true);
-        } else {
-            holder.targetLayout.setBackgroundColor(Color.parseColor("#FFFFFF"));
-            holder.deleteButton.setVisibility(View.VISIBLE);
-            holder.editButton.setVisibility(View.VISIBLE);
-            target.setActive(false);
-        }
-        fragment_targets.targetViewModel.update(target);
-        holder.targetLayout.setOnClickListener(view -> {
-            selectedPosition = holder.getAdapterPosition();
-//            fragment_targets.targetViewModel.update(target);
-            notifyDataSetChanged();
-        });
+        Target target= getItem(position);
+        holder.targetTitleView.setText(target.getTitle());
+        holder.targetNumStepsView.setText(MessageFormat.format("{0} Steps", String.valueOf(target.getNumSteps())));
     }
 
     public class TargetViewHolder extends RecyclerView.ViewHolder {
@@ -96,10 +73,10 @@ public class TargetAdapter extends ListAdapter<Target, TargetAdapter.TargetViewH
                 int position = getAdapterPosition();
                 listener.onEditClick(position);
             });
-//            targetLayout.setOnClickListener(view -> {
-//                int position = getAdapterPosition();
-//                listener.onClick(position);
-//            });
+            targetLayout.setOnClickListener(view -> {
+                int position = getAdapterPosition();
+                listener.onClick(position);
+            });
 
         }
     }

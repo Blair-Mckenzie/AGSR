@@ -15,12 +15,17 @@ public class AGSRRepository {
     private final WalkDao walkDao;
     private final LiveData<List<Walk>> allWalks;
 
+    private final HistoryDao historyDao;
+    private final LiveData<List<History>> allHistory;
+
     AGSRRepository(Application application) {
         AGSRDatabase db = AGSRDatabase.getDatabase(application);
         walkDao = db.walkDao();
         allWalks = walkDao.getWalks();
         targetDao = db.targetDao();
         allTargets = targetDao.getTargets();
+        historyDao = db.historyDao();
+        allHistory = historyDao.getHistory();
     }
 
     LiveData<List<Target>> getAllTargets() {
@@ -44,6 +49,19 @@ public class AGSRRepository {
     }
     void delete(Walk walk) {
         AGSRDatabase.databaseWriteExecutor.execute(() -> walkDao.delete(walk));
+    }
+
+    LiveData<List<History>> getAllHistory() {
+        return allHistory;
+    }
+    void insert(History history) {
+        AGSRDatabase.databaseWriteExecutor.execute(() -> historyDao.insert(history));
+    }
+    void update(History history) {
+        AGSRDatabase.databaseWriteExecutor.execute(() -> historyDao.update(history));
+    }
+    void delete(History history) {
+        AGSRDatabase.databaseWriteExecutor.execute(() -> historyDao.delete(history));
     }
 
 }

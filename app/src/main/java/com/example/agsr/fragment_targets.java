@@ -77,13 +77,14 @@ public class fragment_targets extends Fragment {
         recyclerView.postDelayed(() -> {
             List<Target> currentList = adapter.getCurrentList();
             if (currentList.size() != 0) {
-                if(activeTarget != -1){
-                    highlightTarget(activeTarget);
-                    return;
-                }
-                if(currentList.get(0).getTitle().equals("Default")){
-                    highlightTarget(0);
-                }
+              for(int i =0; i<currentList.size();i++){
+                  if(currentList.get(i).isActive()){
+                      changeTargetBackground(i,'s');
+                  }
+              }
+//                if(currentList.get(0).getTitle().equals("Default")){
+////                    highlightTarget(0);
+//                }
             }
         }, 100);
 
@@ -109,10 +110,18 @@ public class fragment_targets extends Fragment {
                 showPopupDialog("Edit Goal", 'e', view, position);
             }
 
-//            @Override
-//            public void onClick(int position){
-//
-//            }
+            @Override
+            public void onClick(int position){
+                List<Target> currentList = adapter.getCurrentList();
+                for(int i =0; i<currentList.size();i++){
+                    changeTargetBackground(i,'u');
+                    currentList.get(i).setActive(false);
+                    targetViewModel.update(currentList.get(i));
+                }
+                changeTargetBackground(position,'s');
+                currentList.get(position).setActive(true);
+                targetViewModel.update(currentList.get(position));
+            }
 
         });
         return view;
@@ -210,20 +219,28 @@ public class fragment_targets extends Fragment {
         targetViewModel.getAllTargets().observe(getViewLifecycleOwner(), targets -> adapter.submitList(targets));
         return view;
     }
+
     private void sendData(Target target){
         Intent intent = new Intent("sendData");
         intent.putExtra("target", target);
         LocalBroadcastManager.getInstance(this.getContext()).sendBroadcast(intent);
     }
 
-    private void highlightTarget(int position){
+    private void changeTargetBackground(int position, char selected){
         View v = Objects.requireNonNull(recyclerView.findViewHolderForAdapterPosition(position)).itemView;
         LinearLayout goalLayout = v.findViewById(R.id.target_layout);
         Button deleteButton = v.findViewById(R.id.target_delete_button);
         Button editButton = v.findViewById(R.id.target_edit_button);
-        deleteButton.setVisibility(View.INVISIBLE);
-        editButton.setVisibility(View.INVISIBLE);
-        goalLayout.setBackgroundColor(Color.parseColor("#DBE1FF"));
+        if(selected == 's'){
+            deleteButton.setVisibility(View.INVISIBLE);
+            editButton.setVisibility(View.INVISIBLE);
+            goalLayout.setBackgroundColor(Color.parseColor("#DBE1FF"));
+        }else{
+            goalLayout.setBackgroundColor(Color.parseColor("#FFFFFF"));
+            deleteButton.setVisibility(View.VISIBLE);
+            editButton.setVisibility(View.VISIBLE);
+        }
+
     }
 
 }

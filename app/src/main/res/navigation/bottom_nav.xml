@@ -8,12 +8,12 @@
     <fragment
         android:id="@+id/fragment_home"
         android:name="com.example.agsr.fragment_home"
-        android:label="Home"
+        android:label="Current Goal"
         tools:layout="@layout/fragment_home" />
     <fragment
         android:id="@+id/fragment_targets"
         android:name="com.example.agsr.fragment_targets"
-        android:label="Targets"
+        android:label="Walking Goals"
         tools:layout="@layout/fragment_targets" />
     <fragment
         android:id="@+id/fragment_calendar"

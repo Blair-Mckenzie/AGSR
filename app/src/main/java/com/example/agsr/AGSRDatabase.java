@@ -13,21 +13,21 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Target.class, Walk.class},version = 2,exportSchema = false)
+@Database(entities = {Target.class, Walk.class,History.class},version = 4,exportSchema = false)
 public abstract class AGSRDatabase  extends RoomDatabase {
-    @SuppressWarnings("WeakerAccess")
     public abstract TargetDao targetDao();
     public abstract WalkDao walkDao();
+    public abstract HistoryDao historyDao();
 
     private static volatile AGSRDatabase INSTANCE;
-    private static final int NUMBER_OF_THREADS = 4;
+    private static final int NUMBER_OF_THREADS = 6;
     static final ExecutorService databaseWriteExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
     static AGSRDatabase getDatabase(final Context context){
         if (INSTANCE == null) {
             synchronized (AGSRDatabase.class) {
                 if (INSTANCE == null) {
-                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(), AGSRDatabase.class, "AGSR_database").addCallback(sRoomDatabaseCallback).build();
+                    INSTANCE = Room.databaseBuilder(context.getApplicationContext(), AGSRDatabase.class, "AGSR_database").addCallback(sRoomDatabaseCallback).fallbackToDestructiveMigration().build();
                 }
             }
         }
@@ -45,11 +45,14 @@ public abstract class AGSRDatabase  extends RoomDatabase {
 //                // Populate the database in the background.
 //                // If you want to start with more words, just add them.
                     TargetDao dao = INSTANCE.targetDao();
+                    HistoryDao dao1 = INSTANCE.historyDao();
                     Target [] allTargets = dao.getAllTargets();
                     if(allTargets.length == 0){
                         Target defaultTarget = new Target("Default",10000,true);
                         dao.insert(defaultTarget);
                     }
+                    dao1.deleteAll();
+//                    dao1.insert(new History("27/02/2022","Default",10000,2000));
 
 
 
