@@ -77,34 +77,22 @@ public class fragment_calendar extends Fragment {
         recyclerView.setAdapter(adapter);
         historyViewModel = new ViewModelProvider(this).get(HistoryViewModel.class);
         historyViewModel.getTodayHistory(currentDate).observe(getViewLifecycleOwner(),histories -> adapter.submitList(histories));
-
-//        historyViewModel.getHistory().observe(getViewLifecycleOwner(), histories -> adapter.submitList(histories));
-        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-            @Override
-            public void onSelectedDayChange(@NonNull CalendarView calendarView, int year, int month, int day) {
-                historyViewModel.getTodayHistory(currentDate).removeObservers(getViewLifecycleOwner());
-                month = month+1 ;
-                String newDate;
-                if(month <10){
-                    newDate = (String.valueOf(day)+"/"+ "0"+String.valueOf(month)+"/"+String.valueOf(year));
-                }else{
-                    newDate = (String.valueOf(day)+"/"+ String.valueOf(month)+"/"+String.valueOf(year));
-                }
-                historyViewModel.getTodayHistory(newDate).observe(getViewLifecycleOwner(),histories -> adapter.submitList(histories));
+        calendarView.setOnDateChangeListener((calendarView1, year, month, day) -> {
+            historyViewModel.getTodayHistory(currentDate).removeObservers(getViewLifecycleOwner());
+            month += 1;
+            String newDate;
+            if(month <10){
+                newDate = (day +"/"+ "0"+month+"/"+year);
+            }else{
+                newDate = (day+"/"+month+"/"+year);
             }
+            historyViewModel.getTodayHistory(newDate).observe(getViewLifecycleOwner(),histories -> adapter.submitList(histories));
         });
 
-        deleteHistory.setOnClickListener(view1 -> {
-            historyViewModel.deleteAll();
-        });
-
+        deleteHistory.setOnClickListener(view1 -> historyViewModel.deleteAll());
         editHistory.setOnClickListener(view1->{
-            
+
         });
         return view;
-    }
-
-    public List<History> getHistoryList(){
-        return adapter.getCurrentList();
     }
 }
