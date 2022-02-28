@@ -1,5 +1,6 @@
 package com.example.agsr;
 
+import android.animation.ObjectAnimator;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -25,6 +26,7 @@ import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -46,9 +48,6 @@ public class fragment_home extends Fragment {
     private TextView displayPercentage;
     private TextView goalName;
 
-    private TextView dateTimeDisplay;
-    private Calendar calendar;
-    private SimpleDateFormat dateFormat;
     private String date;
 
     public fragment_home() {
@@ -110,9 +109,9 @@ public class fragment_home extends Fragment {
         progressBar = view.findViewById(R.id.progress_bar);
         goalName = view.findViewById(R.id.current_goal_textview);
 
-        dateTimeDisplay = view.findViewById(R.id.date_view);
-        calendar = Calendar.getInstance();
-        dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        TextView dateTimeDisplay = view.findViewById(R.id.date_view);
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         date = dateFormat.format(calendar.getTime());
         dateTimeDisplay.setText(date);
 
@@ -142,7 +141,8 @@ public class fragment_home extends Fragment {
 
     public void updateProgressBar() {
         double prog = (((double) numSteps / (double) goal) * 100);
-        progressBar.setProgress((int) prog, true);
+//        progressBar.setProgress((int) prog, true);
+        ObjectAnimator.ofInt(progressBar,"progress",(int) prog).setDuration(350).start();
         displayCurrentSteps.setText(MessageFormat.format("{0} / {1}", String.valueOf(numSteps), goal));
         displayPercentage.setText(MessageFormat.format("{0} %", String.valueOf(Math.round(prog))));
     }

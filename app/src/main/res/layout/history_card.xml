@@ -1,23 +1,27 @@
-<LinearLayout android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <com.google.android.material.card.MaterialCardView
-    android:layout_width="match_parent"
-    android:layout_height="150dp"
-    android:layout_margin="16dp">
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_margin="16dp"
+        android:elevation="4dp">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
             <TextView
                 android:id="@+id/history_target_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 android:gravity="center"
+                android:textAppearance="?attr/textAppearanceHeadline6"
                 android:textSize="16sp"
                 tools:text="Goal Name" />
 
@@ -28,6 +32,7 @@
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginBottom="16dp"
                 android:gravity="center"
+                android:textAppearance="?attr/textAppearanceBody2"
                 android:textSize="16sp"
                 tools:text="Number of Steps" />
 
@@ -38,9 +43,10 @@
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginBottom="16dp"
                 android:gravity="center"
+                android:textAppearance="?attr/textAppearanceBody2"
                 android:textSize="16sp"
                 tools:text="% of Goal Completed" />
         </LinearLayout>
 
-</com.google.android.material.card.MaterialCardView>
+    </com.google.android.material.card.MaterialCardView>
 </LinearLayout>

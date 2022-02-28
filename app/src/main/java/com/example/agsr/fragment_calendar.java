@@ -2,6 +2,7 @@ package com.example.agsr;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.TextView;
 
@@ -24,8 +26,10 @@ public class fragment_calendar extends Fragment {
 
     public static HistoryViewModel historyViewModel;
     private RecyclerView recyclerView;
-    HistoryAdapter adapter;
+    static HistoryAdapter adapter;
     String currentDate;
+    private final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
 
     public fragment_calendar() {
         // Required empty public constructor
@@ -46,7 +50,12 @@ public class fragment_calendar extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
+        List<History> currentList = adapter.getCurrentList();
+        if(currentList.size() >1){
+            for(int i =0;i<currentList.size()-1;i++){
+                historyViewModel.delete(currentList.get(i));
+            }
+        }
     }
 
     @Override
@@ -57,7 +66,9 @@ public class fragment_calendar extends Fragment {
         TextView historyTargetTitle = view.findViewById(R.id.history_target_title);
         TextView historyTargetSteps = view.findViewById(R.id.history_target_steps);
         TextView historyGoalCompleted = view.findViewById(R.id.history_goal_completed);
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Button deleteHistory = view.findViewById(R.id.delete_history_button);
+        Button editHistory = view.findViewById(R.id.edit_history_button);
+
         currentDate = dateFormat.format(calendarView.getDate());
         System.out.println(calendarView.getDate());
         LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
@@ -65,10 +76,35 @@ public class fragment_calendar extends Fragment {
         adapter = new HistoryAdapter(new HistoryAdapter.TargetDiff());
         recyclerView.setAdapter(adapter);
         historyViewModel = new ViewModelProvider(this).get(HistoryViewModel.class);
-        historyViewModel.getHistory().observe(getViewLifecycleOwner(), histories -> adapter.submitList(histories));
+        historyViewModel.getTodayHistory(currentDate).observe(getViewLifecycleOwner(),histories -> adapter.submitList(histories));
 
-//        calendarView.set
+//        historyViewModel.getHistory().observe(getViewLifecycleOwner(), histories -> adapter.submitList(histories));
+        calendarView.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
+            @Override
+            public void onSelectedDayChange(@NonNull CalendarView calendarView, int year, int month, int day) {
+                historyViewModel.getTodayHistory(currentDate).removeObservers(getViewLifecycleOwner());
+                month = month+1 ;
+                String newDate;
+                if(month <10){
+                    newDate = (String.valueOf(day)+"/"+ "0"+String.valueOf(month)+"/"+String.valueOf(year));
+                }else{
+                    newDate = (String.valueOf(day)+"/"+ String.valueOf(month)+"/"+String.valueOf(year));
+                }
+                historyViewModel.getTodayHistory(newDate).observe(getViewLifecycleOwner(),histories -> adapter.submitList(histories));
+            }
+        });
 
+        deleteHistory.setOnClickListener(view1 -> {
+            historyViewModel.deleteAll();
+        });
+
+        editHistory.setOnClickListener(view1->{
+            
+        });
         return view;
+    }
+
+    public List<History> getHistoryList(){
+        return adapter.getCurrentList();
     }
 }

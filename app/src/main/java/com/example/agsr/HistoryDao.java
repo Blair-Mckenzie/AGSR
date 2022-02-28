@@ -27,6 +27,9 @@ public interface HistoryDao {
     @Query("DELETE FROM history_table")
     void deleteAll();
 
+    @Query("SELECT * FROM history_table where date = :date")
+    LiveData<List<History>> getHistoryDate(String date);
+
     @Query("SELECT * FROM history_table")
     public History[] getAllHistory();
 

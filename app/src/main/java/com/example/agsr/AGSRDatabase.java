@@ -52,8 +52,9 @@ public abstract class AGSRDatabase  extends RoomDatabase {
                         dao.insert(defaultTarget);
                     }
                     dao1.deleteAll();
-//                    dao1.insert(new History("27/02/2022","Default",10000,2000));
-
+                    dao1.insert(new History("27/02/2022","Default",10000,1000));
+                    dao1.insert(new History("26/02/2022","Default",5000,1000));
+                    dao1.insert(new History("23/02/2022","Default",2000,1000));
 
 
 ////                dao.deleteAll();

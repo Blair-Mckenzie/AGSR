@@ -22,4 +22,6 @@
     <string name="about_menu_text">About</string>
     <string name="toggle_editable_goals">Toggle editable goals</string>
     <string name="toggle_historical_editing">Toggle Historical Editing</string>
+    <string name="delete_all_history">Delete All History</string>
+    <string name="edit_history">Edit History</string>
 </resources>

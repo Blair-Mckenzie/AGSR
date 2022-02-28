@@ -5,6 +5,9 @@ import android.os.AsyncTask;
 
 import androidx.lifecycle.LiveData;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class AGSRRepository {
@@ -17,6 +20,8 @@ public class AGSRRepository {
 
     private final HistoryDao historyDao;
     private final LiveData<List<History>> allHistory;
+    private final LiveData<List<History>> todayHistory;
+    private String date;
 
     AGSRRepository(Application application) {
         AGSRDatabase db = AGSRDatabase.getDatabase(application);
@@ -26,6 +31,7 @@ public class AGSRRepository {
         allTargets = targetDao.getTargets();
         historyDao = db.historyDao();
         allHistory = historyDao.getHistory();
+        todayHistory = historyDao.getHistoryDate(date);
     }
 
     LiveData<List<Target>> getAllTargets() {
@@ -54,6 +60,10 @@ public class AGSRRepository {
     LiveData<List<History>> getAllHistory() {
         return allHistory;
     }
+
+    LiveData<List<History>> getTodayHistory(String date){
+        return historyDao.getHistoryDate(date);
+    }
     void insert(History history) {
         AGSRDatabase.databaseWriteExecutor.execute(() -> historyDao.insert(history));
     }
@@ -63,5 +73,9 @@ public class AGSRRepository {
     void delete(History history) {
         AGSRDatabase.databaseWriteExecutor.execute(() -> historyDao.delete(history));
     }
+    void deleteAll(){
+        AGSRDatabase.databaseWriteExecutor.execute(historyDao::deleteAll);
+    }
+
 
 }

@@ -21,11 +21,34 @@
         android:id="@+id/history_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="175dp"
-        android:layout_marginTop="20dp"
         android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/calendarView" />
 
+    <Button
+        android:id="@+id/delete_history_button"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_width="125dp"
+        android:layout_height="65dp"
+        android:layout_marginEnd="140dp"
+        android:text="@string/delete_all_history"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/history_recycler_view" />
+
+    <Button
+        android:id="@+id/edit_history_button"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_width="125dp"
+        android:layout_height="65dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginStart="140dp"
+        android:text="@string/edit_history"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/history_recycler_view" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

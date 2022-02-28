@@ -32,9 +32,10 @@ public class HistoryAdapter extends ListAdapter<History, HistoryAdapter.HistoryV
     @Override
     public void onBindViewHolder(@NonNull HistoryViewHolder holder, int position) {
         History history = getItem(position);
+        double prog = (((double) history.getCurrentSteps() / (double) history.getGoalSteps()) * 100);
         holder.historyTargetTitle.setText(history.getGoalTitle());
         holder.historyTargetSteps.setText( String.valueOf(history.getGoalSteps()));
-        holder.historyGoalCompleted.setText(String.valueOf(history.getCurrentSteps()));
+        holder.historyGoalCompleted.setText(MessageFormat.format("{0} %", String.valueOf(Math.round(prog))));
 //        holder.targetNumStepsView.setText(MessageFormat.format("{0} Steps", String.valueOf(target.getNumSteps())));
     }
 
