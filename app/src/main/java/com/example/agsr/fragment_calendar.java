@@ -25,15 +25,20 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
 
-public class fragment_calendar extends Fragment{
+public class fragment_calendar extends Fragment {
 
     public static HistoryViewModel historyViewModel;
     private RecyclerView recyclerView;
@@ -43,6 +48,7 @@ public class fragment_calendar extends Fragment{
     boolean isHistoryToggled;
     SharedPreferences sharedPreferences;
     ArrayList<String> currentGoals;
+    HashMap<String, Integer> mapOfTargets;
     String selectedTarget = "";
 
     public fragment_calendar() {
@@ -73,10 +79,24 @@ public class fragment_calendar extends Fragment{
         sharedPreferences = this.getActivity().getSharedPreferences("AGSR", Context.MODE_PRIVATE);
         Set<String> set = sharedPreferences.getStringSet("listOfTargets", null);
         currentGoals = new ArrayList<>(set);
+        mapOfTargets = new HashMap<>();
+        try {
+            String jsonString = sharedPreferences.getString("mapOfTargets", (new JSONObject()).toString());
+            JSONObject jsonObject = new JSONObject(jsonString);
+            Iterator<String> keysItr = jsonObject.keys();
+            while (keysItr.hasNext()) {
+                String k = keysItr.next();
+                Integer v = (Integer) jsonObject.get(k);
+                mapOfTargets.put(k, v);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle
+            savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_calendar, container, false);
         recyclerView = view.findViewById(R.id.history_recycler_view);
         CalendarView calendarView = view.findViewById(R.id.calendarView);
@@ -183,8 +203,8 @@ public class fragment_calendar extends Fragment{
 //                String newTitle = titleInput.getText().toString().trim();
                 if (type == 'e') {
 
-                }else{
-                    historyViewModel.insert(new History(currentDate,selectedTarget,10000,Integer.parseInt(historyStepsInput.getText().toString())));
+                } else {
+                    historyViewModel.insert(new History(currentDate, selectedTarget, mapOfTargets.get(selectedTarget), Integer.parseInt(historyStepsInput.getText().toString())));
                 }
             }
         });

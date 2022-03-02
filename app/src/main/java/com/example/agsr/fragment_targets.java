@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -25,9 +26,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -81,6 +86,8 @@ public class fragment_targets extends Fragment {
         super.onPause();
         List<Target> currentList = adapter.getCurrentList();
         ArrayList<String> listOfTargets = new ArrayList<>();
+        Map<String, Integer> mapOfTargets = new HashMap<>();
+
         String activeTitle = "";
         int activeSteps =0;
         if (currentList.size() != 0) {
@@ -90,12 +97,16 @@ public class fragment_targets extends Fragment {
                     activeSteps = currentList.get(i).getNumSteps();
                 }
                 listOfTargets.add(currentList.get(i).getTitle());
+                mapOfTargets.put(currentList.get(i).getTitle(),currentList.get(i).getNumSteps());
             }
         }
         SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences("AGSR", Context.MODE_PRIVATE);
         prefs = sharedPreferences.edit();
         Set<String> set = new HashSet<>(listOfTargets);
-        prefs.putStringSet("listOfTargets", set);
+        JSONObject jsonObject = new JSONObject(mapOfTargets);
+        String jsonString = jsonObject.toString();
+        prefs.putString("mapOfTargets", jsonString);
+        prefs.putStringSet("listOfTargets",set);
         prefs.putString("activeGoalTitle",activeTitle);
         prefs.putInt("activeGoalSteps",activeSteps);
         prefs.apply();

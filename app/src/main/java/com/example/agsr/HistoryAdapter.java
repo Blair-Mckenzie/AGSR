@@ -3,7 +3,6 @@ package com.example.agsr;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -67,7 +66,8 @@ public class HistoryAdapter extends ListAdapter<History, HistoryAdapter.HistoryV
         @Override
         public boolean areContentsTheSame(@NonNull History oldItem, @NonNull History newItem) {
             return oldItem.getGoalTitle().equals(newItem.getGoalTitle()) &&
-                    oldItem.getGoalSteps() == newItem.getGoalSteps();
+                    oldItem.getGoalSteps() == newItem.getGoalSteps()&&
+                    oldItem.getCurrentSteps() == newItem.getCurrentSteps();
         }
     }
 }
