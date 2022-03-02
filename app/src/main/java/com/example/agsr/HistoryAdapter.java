@@ -33,15 +33,17 @@ public class HistoryAdapter extends ListAdapter<History, HistoryAdapter.HistoryV
     public void onBindViewHolder(@NonNull HistoryViewHolder holder, int position) {
         History history = getItem(position);
         double prog = (((double) history.getCurrentSteps() / (double) history.getGoalSteps()) * 100);
-        holder.historyTargetTitle.setText(history.getGoalTitle());
-        holder.historyTargetSteps.setText( String.valueOf(history.getGoalSteps()));
-        holder.historyGoalCompleted.setText(MessageFormat.format("{0} %", String.valueOf(Math.round(prog))));
+        holder.historyTargetTitle.setText(MessageFormat.format("Goal Name - {0}",history.getGoalTitle()));
+        holder.historyStepsWalked.setText(MessageFormat.format("Steps Walked - {0}",String.valueOf(history.getCurrentSteps())));
+        holder.historyTargetSteps.setText(MessageFormat.format("Target Steps - {0}",String.valueOf(history.getGoalSteps())));
+        holder.historyGoalCompleted.setText(MessageFormat.format("Goal Completed - {0} %", String.valueOf(Math.round(prog))));
 //        holder.targetNumStepsView.setText(MessageFormat.format("{0} Steps", String.valueOf(target.getNumSteps())));
     }
 
     public class HistoryViewHolder extends RecyclerView.ViewHolder {
         LinearLayout targetLayout;
         TextView historyTargetTitle;
+        TextView historyStepsWalked;
         TextView historyTargetSteps;
         TextView historyGoalCompleted;
 
@@ -49,6 +51,7 @@ public class HistoryAdapter extends ListAdapter<History, HistoryAdapter.HistoryV
             super(itemView);
 //            targetLayout = itemView.findViewById(R.id.target_layout);
             historyTargetTitle = itemView.findViewById(R.id.history_target_title);
+            historyStepsWalked = itemView.findViewById(R.id.history_completed_steps);
             historyTargetSteps = itemView.findViewById(R.id.history_target_steps);
             historyGoalCompleted = itemView.findViewById(R.id.history_goal_completed);
 

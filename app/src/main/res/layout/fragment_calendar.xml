@@ -20,7 +20,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/history_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="175dp"
+        android:layout_height="200dp"
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="20dp"
         app:layout_constraintEnd_toEndOf="parent"

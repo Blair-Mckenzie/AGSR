@@ -1,6 +1,8 @@
 package com.example.agsr;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -23,17 +25,20 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 public class fragment_targets extends Fragment {
 
     private RecyclerView recyclerView;
     public static TargetViewModel targetViewModel;
     public TargetAdapter adapter;
+    SharedPreferences.Editor prefs;
 
     private int activeTarget = -1;
-    private int selectedPosition = -1;
 
     public fragment_targets() {
         // Required empty public constructor
@@ -72,6 +77,31 @@ public class fragment_targets extends Fragment {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        List<Target> currentList = adapter.getCurrentList();
+        ArrayList<String> listOfTargets = new ArrayList<>();
+        String activeTitle = "";
+        int activeSteps =0;
+        if (currentList.size() != 0) {
+            for (int i = 0; i < currentList.size(); i++) {
+                if (currentList.get(i).isActive()) {
+                    activeTitle = currentList.get(i).getTitle();
+                    activeSteps = currentList.get(i).getNumSteps();
+                }
+                listOfTargets.add(currentList.get(i).getTitle());
+            }
+        }
+        SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences("AGSR", Context.MODE_PRIVATE);
+        prefs = sharedPreferences.edit();
+        Set<String> set = new HashSet<>(listOfTargets);
+        prefs.putStringSet("listOfTargets", set);
+        prefs.putString("activeGoalTitle",activeTitle);
+        prefs.putInt("activeGoalSteps",activeSteps);
+        prefs.apply();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         recyclerView.postDelayed(() -> {
@@ -91,8 +121,7 @@ public class fragment_targets extends Fragment {
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = setUpLayout(inflater, container);
 
@@ -122,7 +151,6 @@ public class fragment_targets extends Fragment {
                 currentList.get(position).setActive(true);
                 targetViewModel.update(currentList.get(position));
             }
-
         });
         return view;
 

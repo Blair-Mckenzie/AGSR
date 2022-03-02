@@ -1,5 +1,6 @@
 package com.example.agsr;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -11,17 +12,15 @@ import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
     NavController navController;
-
+    SharedPreferences.Editor prefs;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         BottomNavigationView bottomNav = findViewById(R.id.bottomNavigationView);
         NavHostFragment hostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.fragmentContainerView);
         assert hostFragment != null;
@@ -31,7 +30,13 @@ public class MainActivity extends AppCompatActivity {
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(R.id.fragment_home, R.id.fragment_targets, R.id.fragment_calendar).build();
         NavigationUI.setupActionBarWithNavController(this,navController,appBarConfiguration);
         NavigationUI.setupWithNavController(bottomNav, navController);
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+//        SharedPreferences sharedPreferences = getSharedPreferences("AGSR",MODE_PRIVATE);
+//        prefs = sharedPreferences.edit();
     }
 
     @Override

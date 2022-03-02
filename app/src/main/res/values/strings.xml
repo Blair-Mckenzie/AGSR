@@ -16,12 +16,10 @@
     <string name="target_num_steps_input">Number of Steps</string>
     <string name="cancel_button_text">Cancel</string>
     <string name="add_button_text">Add</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="settings_text">Settings</string>
     <string name="about_menu_text">About</string>
     <string name="toggle_editable_goals">Toggle editable goals</string>
     <string name="toggle_historical_editing">Toggle Historical Editing</string>
     <string name="delete_all_history">Delete All History</string>
-    <string name="edit_history">Edit History</string>
+    <string name="edit_history">Edit/Add Activity</string>
 </resources>

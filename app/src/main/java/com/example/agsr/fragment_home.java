@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -63,6 +64,10 @@ public class fragment_home extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences("AGSR", Context.MODE_PRIVATE);
+        String activeTitle = sharedPreferences.getString("activeGoalTitle","Default");
+        goalName.setText(activeTitle);
+        goal = sharedPreferences.getInt("activeGoalSteps",10000);
         recyclerView.postDelayed(() -> {
             if (adapter.getCurrentList().size() != 0) {
                 numSteps = adapter.getCurrentList().get(adapter.getCurrentList().size() - 1).getCurrentSteps();
