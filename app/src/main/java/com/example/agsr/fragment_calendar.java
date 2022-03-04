@@ -99,11 +99,11 @@ public class fragment_calendar extends Fragment {
         Button editHistory = view.findViewById(R.id.edit_history_button);
         sharedPreferences = this.getActivity().getSharedPreferences("AGSR", Context.MODE_PRIVATE);
         isHistoryToggled = sharedPreferences.getBoolean("historyToggle", false);
-        if (isHistoryToggled) {
-            editHistory.setVisibility(View.VISIBLE);
-        } else {
+//        if (isHistoryToggled) {
+//            editHistory.setVisibility(View.VISIBLE);
+//        } else {
             editHistory.setVisibility(View.INVISIBLE);
-        }
+//        }
         currentDate = dateFormat.format(calendarView.getDate());
         System.out.println(calendarView.getDate());
         LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
@@ -118,11 +118,7 @@ public class fragment_calendar extends Fragment {
         calendarView.setOnDateChangeListener((calendarView1, year, month, day) -> {
             historyViewModel.getTodayHistory(currentDate).removeObservers(getViewLifecycleOwner());
             isHistoryToggled = sharedPreferences.getBoolean("historyToggle", false);
-            if (!isHistoryToggled) {
-                editHistory.setVisibility(View.INVISIBLE);
-            } else {
-                editHistory.setVisibility(View.VISIBLE);
-            }
+
             month += 1;
             String newDate;
             if (day < 10 && month < 10) {
@@ -133,6 +129,11 @@ public class fragment_calendar extends Fragment {
                 newDate = day + "/" + "0" + month + "/" + year;
             } else {
                 newDate = day + "/" + month + "/" + year;
+            }
+            if (!isHistoryToggled || newDate.equals(dateFormat.format(calendarView1.getDate()))) {
+                editHistory.setVisibility(View.INVISIBLE);
+            } else {
+                editHistory.setVisibility(View.VISIBLE);
             }
             currentDate = newDate;
             historyViewModel.getTodayHistory(newDate).observe(getViewLifecycleOwner(), histories -> adapter.submitList(histories));
