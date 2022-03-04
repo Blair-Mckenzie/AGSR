@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@Database(entities = {Target.class, Walk.class,History.class},version = 4,exportSchema = false)
+@Database(entities = {Target.class, Walk.class,History.class},version = 5,exportSchema = false)
 public abstract class AGSRDatabase  extends RoomDatabase {
     public abstract TargetDao targetDao();
     public abstract WalkDao walkDao();

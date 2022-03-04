@@ -1,6 +1,7 @@
 package com.example.agsr;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -102,7 +103,7 @@ public class fragment_calendar extends Fragment {
 //        if (isHistoryToggled) {
 //            editHistory.setVisibility(View.VISIBLE);
 //        } else {
-            editHistory.setVisibility(View.INVISIBLE);
+        editHistory.setVisibility(View.INVISIBLE);
 //        }
         currentDate = dateFormat.format(calendarView.getDate());
         System.out.println(calendarView.getDate());
@@ -140,8 +141,27 @@ public class fragment_calendar extends Fragment {
         });
 
         deleteHistory.setOnClickListener(view1 -> {
-            historyViewModel.deleteAll();
-            fragment_home.walkViewModel.deleteAll();
+            AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+            View viewInflated = LayoutInflater.from(getContext()).inflate(R.layout.confirm_delete_popup, (ViewGroup) getView(), false);
+            TextView confrimDelete = viewInflated.findViewById(R.id.delete_popup);
+            builder.setView(viewInflated);
+            String message = "Are you sure you wish to delete all history (including today)";
+            confrimDelete.setText(message.toString());
+            builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                    historyViewModel.deleteAll();
+                    fragment_home.walkViewModel.deleteAll();
+                }
+            });
+            builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            builder.show();
         });
         editHistory.setOnClickListener(view1 -> {
             if (adapter.getCurrentList().size() == 0) {

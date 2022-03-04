@@ -16,48 +16,31 @@
         app:layout_constraintBottom_toBottomOf="parent"
         tools:layout_editor_absoluteX="38dp">
 
-        <LinearLayout
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/AGSRTheme"
             android:layout_width="224dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="60dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="8dp"
+            android:hint="@string/steps_input">
 
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/AGSRTheme"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/steps_input"
                 android:layout_width="match_parent"
-                android:layout_height="54dp"
-                android:hint="@string/steps_input">
+                android:layout_height="match_parent"
+                android:inputType="number"
+                android:maxLines="1"
+                android:textSize="14sp" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/steps_input"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="number"
-                    android:maxLines="1"
-                    android:textSize="12sp" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                style="@style/AGSRTheme"
-                android:layout_width="match_parent"
-                android:layout_height="54dp"
-                android:hint="@string/title_input">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/activity_name_input"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="text"
-                    android:maxLines="1"
-                    android:textSize="12sp" />
-            </com.google.android.material.textfield.TextInputLayout>
-        </LinearLayout>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/add_steps_button"
-            style="@style/AGSRTheme"
-            android:layout_width="96dp"
-            android:layout_height="48dp"
-            android:layout_gravity="center"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_width="108dp"
+            android:layout_gravity="center_vertical"
+            android:layout_height="60dp"
             android:layout_marginHorizontal="32dp"
             android:text="@string/enter_button_text" />
     </LinearLayout>

@@ -3,6 +3,7 @@ package com.example.agsr;
 import android.animation.ObjectAnimator;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -14,6 +15,7 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -65,9 +67,9 @@ public class fragment_home extends Fragment {
     public void onResume() {
         super.onResume();
         SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences("AGSR", Context.MODE_PRIVATE);
-        String activeTitle = sharedPreferences.getString("activeGoalTitle","Default");
+        String activeTitle = sharedPreferences.getString("activeGoalTitle", "Default");
         goalName.setText(activeTitle);
-        goal = sharedPreferences.getInt("activeGoalSteps",10000);
+        goal = sharedPreferences.getInt("activeGoalSteps", 10000);
         recyclerView.postDelayed(() -> {
             if (adapter.getCurrentList().size() != 0) {
                 numSteps = adapter.getCurrentList().get(adapter.getCurrentList().size() - 1).getCurrentSteps();
@@ -82,7 +84,7 @@ public class fragment_home extends Fragment {
     public void onPause() {
         super.onPause();
         HistoryViewModel historyViewModel = new ViewModelProvider(getActivity()).get(HistoryViewModel.class);
-        historyViewModel.insert(new History(date,goalName.getText().toString(),goal,numSteps));
+        historyViewModel.insert(new History(date, goalName.getText().toString(), goal, numSteps));
     }
 
     @Override
@@ -106,7 +108,6 @@ public class fragment_home extends Fragment {
         walkViewModel.getAllWalks().observe(getViewLifecycleOwner(), walks -> adapter.submitList(walks));
 
         EditText addStepsTextview = view.findViewById(R.id.steps_input);
-        EditText addActivityName = view.findViewById(R.id.activity_name_input);
         displayCurrentSteps = view.findViewById(R.id.text_view_steps_progress);
         displayPercentage = view.findViewById(R.id.text_view_progress_percentage);
         MaterialButton addStepsButton = view.findViewById(R.id.add_steps_button);
@@ -120,24 +121,30 @@ public class fragment_home extends Fragment {
         dateTimeDisplay.setText(date);
 
         addStepsButton.setOnClickListener(view1 -> {
-            if (isEmptyInput(addStepsTextview) && isEmptyInput(addActivityName)) {
+            if (isEmptyInput(addStepsTextview)) {
                 addStepsTextview.setError("Required");
-                addActivityName.setError("Required");
-            } else if (isEmptyInput(addStepsTextview)) {
-                addStepsTextview.setError("Required");
-            } else if (isEmptyInput(addActivityName)) {
-                addActivityName.setError("Required");
             } else {
                 numSteps += Integer.parseInt((addStepsTextview.getText().toString()));
                 updateProgressBar();
-                walkViewModel.insert(new Walk(addActivityName.getText().toString(), Integer.parseInt(addStepsTextview.getText().toString()), numSteps));
+                walkViewModel.insert(new Walk(Integer.parseInt(addStepsTextview.getText().toString()), numSteps));
             }
         });
 
         adapter.setOnItemClickListener(position -> {
-            numSteps -= adapter.getCurrentList().get(position).getNumSteps();
-            updateProgressBar();
-            walkViewModel.delete(adapter.getCurrentList().get(position));
+            AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+            View viewInflated = LayoutInflater.from(getContext()).inflate(R.layout.confirm_delete_popup, (ViewGroup) getView(), false);
+            TextView confrimDelete = viewInflated.findViewById(R.id.delete_popup);
+            builder.setView(viewInflated);
+            String message = "Are you sure you wish to delete these steps";
+            confrimDelete.setText(message);
+            builder.setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                dialog.dismiss();
+                numSteps -= adapter.getCurrentList().get(position).getNumSteps();
+                updateProgressBar();
+                walkViewModel.delete(adapter.getCurrentList().get(position));
+            });
+            builder.setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel());
+            builder.show();
         });
 
         return view;
@@ -146,7 +153,7 @@ public class fragment_home extends Fragment {
     public void updateProgressBar() {
         double prog = (((double) numSteps / (double) goal) * 100);
 //        progressBar.setProgress((int) prog, true);
-        ObjectAnimator.ofInt(progressBar,"progress",(int) prog).setDuration(350).start();
+        ObjectAnimator.ofInt(progressBar, "progress", (int) prog).setDuration(350).start();
         displayCurrentSteps.setText(MessageFormat.format("{0} / {1}", String.valueOf(numSteps), goal));
         displayPercentage.setText(MessageFormat.format("{0} %", String.valueOf(Math.round(prog))));
     }

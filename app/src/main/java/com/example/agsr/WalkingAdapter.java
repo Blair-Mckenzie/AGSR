@@ -38,21 +38,16 @@ public class WalkingAdapter extends ListAdapter<Walk,WalkingAdapter.WalkViewHold
     @Override
     public void onBindViewHolder(@NonNull WalkViewHolder holder, int position) {
         Walk walk = getItem(position);
-        holder.walkTitleView.setText(walk.getTitle());
         holder.walkNumStepsView.setText(MessageFormat.format("{0} Steps",String.valueOf(walk.getNumSteps())));
     }
 
     public class WalkViewHolder extends RecyclerView.ViewHolder {
-        TextView walkTitleView;
         TextView walkNumStepsView;
-        Button addWalkButton;
         Button deleteButton;
 
         WalkViewHolder(View itemView, final WalkingAdapter.OnItemClickListener listener) {
             super(itemView);
-            walkTitleView = itemView.findViewById(R.id.activity_name);
             walkNumStepsView = itemView.findViewById(R.id.walk_num_steps);
-            addWalkButton = itemView.findViewById(R.id.add_steps_button);
             deleteButton = itemView.findViewById(R.id.walk_delete_button);
 
             deleteButton.setOnClickListener(view -> {
@@ -70,8 +65,7 @@ public class WalkingAdapter extends ListAdapter<Walk,WalkingAdapter.WalkViewHold
 
         @Override
         public boolean areContentsTheSame(@NonNull Walk oldItem, @NonNull Walk newItem) {
-            return oldItem.getTitle().equals(newItem.getTitle())&&
-                    oldItem.getNumSteps() == newItem.getNumSteps()&&
+            return oldItem.getNumSteps() == newItem.getNumSteps()&&
                     oldItem.getCurrentSteps() == newItem.getCurrentSteps();
         }
     }

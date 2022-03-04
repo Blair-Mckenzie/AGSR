@@ -1,6 +1,7 @@
 package com.example.agsr;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -128,9 +129,9 @@ public class fragment_targets extends Fragment {
             isGoalsToggled = sharedPreferences.getBoolean("historyToggle", false);
             for (int i = 0; i < 0; i++) {
                 if (!isGoalsToggled) {
-                    disableEditButtons(i,'t');
-                }else{
-                    disableEditButtons(i,'u');
+                    disableEditButtons(i, 't');
+                } else {
+                    disableEditButtons(i, 'u');
                 }
             }
 //                if(currentList.get(0).getTitle().equals("Default")){
@@ -153,7 +154,26 @@ public class fragment_targets extends Fragment {
         adapter.setOnItemClickListener(new TargetAdapter.OnItemClickListener() {
             @Override
             public void onDeleteClick(int position) {
-                targetViewModel.delete(adapter.getCurrentList().get(position));
+                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                View viewInflated = LayoutInflater.from(getContext()).inflate(R.layout.confirm_delete_popup, (ViewGroup) getView(), false);
+                TextView confrimDelete = viewInflated.findViewById(R.id.delete_popup);
+                builder.setView(viewInflated);
+                String message = "Are you sure you wish to delete this goal";
+                confrimDelete.setText(message.toString());
+                builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        targetViewModel.delete(adapter.getCurrentList().get(position));
+                    }
+                });
+                builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
             }
 
             @Override
@@ -297,9 +317,9 @@ public class fragment_targets extends Fragment {
     private void disableEditButtons(int position, char toggle) {
         View v = Objects.requireNonNull(recyclerView.findViewHolderForAdapterPosition(position)).itemView;
         Button editButton = v.findViewById(R.id.target_edit_button);
-        if(toggle =='t'){
+        if (toggle == 't') {
             editButton.setVisibility(View.VISIBLE);
-        } else{
+        } else {
             editButton.setVisibility(View.INVISIBLE);
         }
     }

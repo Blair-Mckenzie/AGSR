@@ -8,20 +8,12 @@ import androidx.room.PrimaryKey;
 public class Walk {
     @PrimaryKey(autoGenerate = true)
     private int id;
-    @NonNull
-    private final String title;
     private final int numSteps;
     private final int currentSteps;
 
-    public Walk(@NonNull String title, int numSteps, int currentSteps) {
-        this.title = title;
+    public Walk( int numSteps, int currentSteps) {
         this.numSteps = numSteps;
         this.currentSteps = currentSteps;
-    }
-
-    @NonNull
-    public String getTitle() {
-        return title;
     }
 
     public int getNumSteps() {
