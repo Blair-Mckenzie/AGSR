@@ -56,6 +56,9 @@ public class AGSRRepository {
     void delete(Walk walk) {
         AGSRDatabase.databaseWriteExecutor.execute(() -> walkDao.delete(walk));
     }
+    void deleteAllWalks(){
+        AGSRDatabase.databaseWriteExecutor.execute(walkDao::deleteAll);
+    }
 
     LiveData<List<History>> getAllHistory() {
         return allHistory;

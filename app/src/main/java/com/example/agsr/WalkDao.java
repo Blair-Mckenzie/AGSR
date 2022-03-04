@@ -17,6 +17,9 @@ public interface WalkDao {
     @Delete
     void delete(Walk walk);
 
+    @Query("DELETE FROM walk_table")
+    void deleteAll();
+
     @Query("SELECT * FROM walk_table")
     LiveData<List<Walk>> getWalks();
 

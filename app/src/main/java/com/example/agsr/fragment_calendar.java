@@ -3,16 +3,6 @@ package com.example.agsr;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +13,12 @@ import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -118,6 +113,8 @@ public class fragment_calendar extends Fragment {
         historyViewModel = new ViewModelProvider(this).get(HistoryViewModel.class);
         historyViewModel.getTodayHistory(currentDate).observe(getViewLifecycleOwner(), histories -> adapter.submitList(histories));
 
+        calendarView.setMaxDate(calendarView.getDate());
+
         calendarView.setOnDateChangeListener((calendarView1, year, month, day) -> {
             historyViewModel.getTodayHistory(currentDate).removeObservers(getViewLifecycleOwner());
             isHistoryToggled = sharedPreferences.getBoolean("historyToggle", false);
@@ -141,7 +138,10 @@ public class fragment_calendar extends Fragment {
             historyViewModel.getTodayHistory(newDate).observe(getViewLifecycleOwner(), histories -> adapter.submitList(histories));
         });
 
-        deleteHistory.setOnClickListener(view1 -> historyViewModel.deleteAll());
+        deleteHistory.setOnClickListener(view1 -> {
+            historyViewModel.deleteAll();
+            fragment_home.walkViewModel.deleteAll();
+        });
         editHistory.setOnClickListener(view1 -> {
             if (adapter.getCurrentList().size() == 0) {
 //                historyViewModel.insert(new History(currentDate,"Default",3000,8000));
@@ -175,20 +175,16 @@ public class fragment_calendar extends Fragment {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                // TODO Auto-generated method stub
             }
         });
         EditText historyStepsInput = viewInflated.findViewById(R.id.history_steps_input);
         TextView historyTargetTitle = viewInflated.findViewById(R.id.history_target_title);
 
         if (type == 'e') {
-//            View v = Objects.requireNonNull(recyclerView.findViewHolderForAdapterPosition(position)).itemView;
-//            TextView historyTargetTitle = v.findViewById(R.id.history_target_title);
-//            TextView historyTargetSteps = v.findViewById(R.id.history_target_steps);
-//            EditText stepsInput = viewInflated.findViewById(R.id.history_steps_input);
-//            String currentStepsDisplay = historyGoalCompleted.getText().toString();
-//            stepsInput.setText(currentStepsDisplay.substring(16));
-//            stepsInput.setText(currentStepsDisplay.substring(0, currentStepsDisplay.length() - 6));
+            View v = Objects.requireNonNull(recyclerView.findViewHolderForAdapterPosition(0)).itemView;
+            TextView historyTargetSteps = v.findViewById(R.id.history_completed_steps);
+            String currentStepsDisplay = historyTargetSteps.getText().toString();
+            historyStepsInput.setText(currentStepsDisplay.substring(15));
             builder.setView(viewInflated);
         }
         builder.setView(viewInflated);
@@ -202,7 +198,11 @@ public class fragment_calendar extends Fragment {
                 dialog.dismiss();
 //                String newTitle = titleInput.getText().toString().trim();
                 if (type == 'e') {
-
+                    History history = adapter.getCurrentList().get(0);
+                    int id = history.getId();
+                    History updatedHistory = new History(currentDate, selectedTarget, mapOfTargets.get(selectedTarget), Integer.parseInt(historyStepsInput.getText().toString()));
+                    updatedHistory.setId(id);
+                    historyViewModel.update(updatedHistory);
                 } else {
                     historyViewModel.insert(new History(currentDate, selectedTarget, mapOfTargets.get(selectedTarget), Integer.parseInt(historyStepsInput.getText().toString())));
                 }

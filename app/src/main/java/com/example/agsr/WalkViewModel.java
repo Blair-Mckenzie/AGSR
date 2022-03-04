@@ -29,4 +29,6 @@ public class WalkViewModel extends AndroidViewModel {
         repository.delete(walk);
     }
 
+    public void deleteAll(){repository.deleteAllWalks();}
+
 }

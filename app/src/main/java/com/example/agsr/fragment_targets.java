@@ -42,6 +42,7 @@ public class fragment_targets extends Fragment {
     public static TargetViewModel targetViewModel;
     public TargetAdapter adapter;
     SharedPreferences.Editor prefs;
+    boolean isGoalsToggled;
 
     private int activeTarget = -1;
 
@@ -73,9 +74,9 @@ public class fragment_targets extends Fragment {
                 }
             }
         }
-        if(activeTarget != -1){
+        if (activeTarget != -1) {
             sendData(currentList.get(activeTarget));
-            outState.putInt("position",activeTarget);
+            outState.putInt("position", activeTarget);
         }
 
         super.onSaveInstanceState(outState);
@@ -89,7 +90,7 @@ public class fragment_targets extends Fragment {
         Map<String, Integer> mapOfTargets = new HashMap<>();
 
         String activeTitle = "";
-        int activeSteps =0;
+        int activeSteps = 0;
         if (currentList.size() != 0) {
             for (int i = 0; i < currentList.size(); i++) {
                 if (currentList.get(i).isActive()) {
@@ -97,7 +98,7 @@ public class fragment_targets extends Fragment {
                     activeSteps = currentList.get(i).getNumSteps();
                 }
                 listOfTargets.add(currentList.get(i).getTitle());
-                mapOfTargets.put(currentList.get(i).getTitle(),currentList.get(i).getNumSteps());
+                mapOfTargets.put(currentList.get(i).getTitle(), currentList.get(i).getNumSteps());
             }
         }
         SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences("AGSR", Context.MODE_PRIVATE);
@@ -106,30 +107,40 @@ public class fragment_targets extends Fragment {
         JSONObject jsonObject = new JSONObject(mapOfTargets);
         String jsonString = jsonObject.toString();
         prefs.putString("mapOfTargets", jsonString);
-        prefs.putStringSet("listOfTargets",set);
-        prefs.putString("activeGoalTitle",activeTitle);
-        prefs.putInt("activeGoalSteps",activeSteps);
+        prefs.putStringSet("listOfTargets", set);
+        prefs.putString("activeGoalTitle", activeTitle);
+        prefs.putInt("activeGoalSteps", activeSteps);
         prefs.apply();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        recyclerView.postDelayed(() -> {
-            List<Target> currentList = adapter.getCurrentList();
-            if (currentList.size() != 0) {
-              for(int i =0; i<currentList.size();i++){
-                  if(currentList.get(i).isActive()){
-                      changeTargetBackground(i,'s');
-                  }
-              }
+//        recyclerView.postDelayed(() -> {
+        List<Target> currentList = adapter.getCurrentList();
+        if (currentList.size() != 0) {
+            for (int i = 0; i < currentList.size(); i++) {
+                if (currentList.get(i).isActive()) {
+                    changeTargetBackground(i, 's');
+                }
+            }
+            SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences("AGSR", Context.MODE_PRIVATE);
+            isGoalsToggled = sharedPreferences.getBoolean("historyToggle", false);
+            for (int i = 0; i < 0; i++) {
+                if (!isGoalsToggled) {
+                    disableEditButtons(i,'t');
+                }else{
+                    disableEditButtons(i,'u');
+                }
+            }
 //                if(currentList.get(0).getTitle().equals("Default")){
 ////                    highlightTarget(0);
 //                }
-            }
-        }, 100);
+        }
+//        }, 100);
 
     }
+
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -151,14 +162,14 @@ public class fragment_targets extends Fragment {
             }
 
             @Override
-            public void onClick(int position){
+            public void onClick(int position) {
                 List<Target> currentList = adapter.getCurrentList();
-                for(int i =0; i<currentList.size();i++){
-                    changeTargetBackground(i,'u');
+                for (int i = 0; i < currentList.size(); i++) {
+                    changeTargetBackground(i, 'u');
                     currentList.get(i).setActive(false);
                     targetViewModel.update(currentList.get(i));
                 }
-                changeTargetBackground(position,'s');
+                changeTargetBackground(position, 's');
                 currentList.get(position).setActive(true);
                 targetViewModel.update(currentList.get(position));
             }
@@ -212,14 +223,14 @@ public class fragment_targets extends Fragment {
                     Target updatedTarget = adapter.getCurrentList().get(position);
                     if (newTitle.equals(updatedTarget.getTitle())) {
                         int id = updatedTarget.getId();
-                        Target target = new Target(titleInput.getText().toString().trim(),Integer.parseInt(stepsInput.getText().toString()),false);
+                        Target target = new Target(titleInput.getText().toString().trim(), Integer.parseInt(stepsInput.getText().toString()), false);
                         target.setId(id);
                         targetViewModel.update(target);
                     } else if (isDuplicate(newTitle)) {
                         Toast.makeText(getContext(), "Goal Name Already Exists", Toast.LENGTH_LONG).show();
                     } else {
                         int id = updatedTarget.getId();
-                        Target target = new Target(titleInput.getText().toString().trim(),Integer.parseInt(stepsInput.getText().toString()),false);
+                        Target target = new Target(titleInput.getText().toString().trim(), Integer.parseInt(stepsInput.getText().toString()), false);
                         target.setId(id);
                         targetViewModel.update(target);
                     }
@@ -259,27 +270,38 @@ public class fragment_targets extends Fragment {
         return view;
     }
 
-    private void sendData(Target target){
+    private void sendData(Target target) {
         Intent intent = new Intent("sendData");
         intent.putExtra("target", target);
         LocalBroadcastManager.getInstance(this.getContext()).sendBroadcast(intent);
     }
 
-    private void changeTargetBackground(int position, char selected){
+    private void changeTargetBackground(int position, char selected) {
         View v = Objects.requireNonNull(recyclerView.findViewHolderForAdapterPosition(position)).itemView;
         LinearLayout goalLayout = v.findViewById(R.id.target_layout);
         Button deleteButton = v.findViewById(R.id.target_delete_button);
         Button editButton = v.findViewById(R.id.target_edit_button);
-        if(selected == 's'){
+        if (selected == 's') {
             deleteButton.setVisibility(View.INVISIBLE);
             editButton.setVisibility(View.INVISIBLE);
             goalLayout.setBackgroundColor(Color.parseColor("#DBE1FF"));
-        }else{
+        } else {
             goalLayout.setBackgroundColor(Color.parseColor("#FFFFFF"));
             deleteButton.setVisibility(View.VISIBLE);
             editButton.setVisibility(View.VISIBLE);
         }
 
+    }
+
+
+    private void disableEditButtons(int position, char toggle) {
+        View v = Objects.requireNonNull(recyclerView.findViewHolderForAdapterPosition(position)).itemView;
+        Button editButton = v.findViewById(R.id.target_edit_button);
+        if(toggle =='t'){
+            editButton.setVisibility(View.VISIBLE);
+        } else{
+            editButton.setVisibility(View.INVISIBLE);
+        }
     }
 
 }

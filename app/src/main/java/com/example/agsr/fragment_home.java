@@ -37,7 +37,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class fragment_home extends Fragment {
 
     private RecyclerView recyclerView;
-    private WalkViewModel walkViewModel;
+    public static WalkViewModel walkViewModel;
     WalkingAdapter adapter;
 
     public static int numSteps;
@@ -98,8 +98,7 @@ public class fragment_home extends Fragment {
         recyclerView = view.findViewById(R.id.walking_list);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
         recyclerView.setLayoutManager(layoutManager);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), layoutManager.getOrientation());
-        recyclerView.addItemDecoration(dividerItemDecoration);
+        recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(), layoutManager.getOrientation()));
 
         adapter = new WalkingAdapter(new WalkingAdapter.TargetDiff());
         recyclerView.setAdapter(adapter);
