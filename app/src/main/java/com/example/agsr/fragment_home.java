@@ -83,6 +83,9 @@ public class fragment_home extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences("AGSR", Context.MODE_PRIVATE);
+        SharedPreferences.Editor prefs = sharedPreferences.edit();
+        prefs.putInt("currentSteps", numSteps);
         HistoryViewModel historyViewModel = new ViewModelProvider(getActivity()).get(HistoryViewModel.class);
         historyViewModel.insert(new History(date, goalName.getText().toString(), goal, numSteps));
     }

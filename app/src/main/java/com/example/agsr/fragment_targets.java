@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -29,7 +28,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -104,6 +105,11 @@ public class fragment_targets extends Fragment {
         }
         SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences("AGSR", Context.MODE_PRIVATE);
         prefs = sharedPreferences.edit();
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        String date = dateFormat.format(calendar.getTime());
+        HistoryViewModel historyViewModel = new ViewModelProvider(getActivity()).get(HistoryViewModel.class);
+        historyViewModel.insert(new History(date, activeTitle, activeSteps, sharedPreferences.getInt("currentSteps",0)));
         Set<String> set = new HashSet<>(listOfTargets);
         JSONObject jsonObject = new JSONObject(mapOfTargets);
         String jsonString = jsonObject.toString();
@@ -123,17 +129,20 @@ public class fragment_targets extends Fragment {
             for (int i = 0; i < currentList.size(); i++) {
                 if (currentList.get(i).isActive()) {
                     changeTargetBackground(i, 's');
+                }else{
+                    disableEditButtons(i,'t');
                 }
             }
             SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences("AGSR", Context.MODE_PRIVATE);
-            isGoalsToggled = sharedPreferences.getBoolean("historyToggle", false);
-            for (int i = 0; i < 0; i++) {
-                if (!isGoalsToggled) {
-                    disableEditButtons(i, 't');
-                } else {
-                    disableEditButtons(i, 'u');
-                }
-            }
+            isGoalsToggled = sharedPreferences.getBoolean("goalsToggle", false);
+
+//            for (int i = 0; i < currentList.size(); i++) {
+//                if (isGoalsToggled) {
+//                    disableEditButtons(i, 't');
+//                } else {
+//                    disableEditButtons(i, 'u');
+//                }
+//            }
 //                if(currentList.get(0).getTitle().equals("Default")){
 ////                    highlightTarget(0);
 //                }
@@ -259,6 +268,13 @@ public class fragment_targets extends Fragment {
                 } else {
                     int numSteps = Integer.parseInt(stepsInput.getText().toString());
                     targetViewModel.insert(new Target(newTitle, numSteps, false));
+                    View buttonView = Objects.requireNonNull(recyclerView.findViewHolderForAdapterPosition(position)).itemView;
+                    Button editButton = buttonView.findViewById(R.id.target_edit_button);
+                    if(!isGoalsToggled){
+                        editButton.setVisibility(View.INVISIBLE);
+                    }else{
+                        editButton.setVisibility(View.VISIBLE);
+                    }
                 }
             }
         });
@@ -305,7 +321,11 @@ public class fragment_targets extends Fragment {
             deleteButton.setVisibility(View.INVISIBLE);
             editButton.setVisibility(View.INVISIBLE);
             goalLayout.setBackgroundColor(Color.parseColor("#DBE1FF"));
-        } else {
+        } else if(!isGoalsToggled && selected == 'u'){
+            goalLayout.setBackgroundColor(Color.parseColor("#FFFFFF"));
+            deleteButton.setVisibility(View.VISIBLE);
+//            editButton.setVisibility(View.VISIBLE);
+        }else{
             goalLayout.setBackgroundColor(Color.parseColor("#FFFFFF"));
             deleteButton.setVisibility(View.VISIBLE);
             editButton.setVisibility(View.VISIBLE);
@@ -318,9 +338,9 @@ public class fragment_targets extends Fragment {
         View v = Objects.requireNonNull(recyclerView.findViewHolderForAdapterPosition(position)).itemView;
         Button editButton = v.findViewById(R.id.target_edit_button);
         if (toggle == 't') {
-            editButton.setVisibility(View.VISIBLE);
-        } else {
             editButton.setVisibility(View.INVISIBLE);
+        } else {
+            editButton.setVisibility(View.VISIBLE);
         }
     }
 

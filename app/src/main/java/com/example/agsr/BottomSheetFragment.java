@@ -1,5 +1,6 @@
 package com.example.agsr;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -9,6 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.switchmaterial.SwitchMaterial;
@@ -61,7 +67,7 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
 //        toggleHistory.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 //            @Override
 //            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-//                Button editHistory = view.findViewById(R.id.edit_history_button);
+//                Activity.getSupportFragmentManager();
 //                if(b){
 //                    editHistory.setVisibility(View.VISIBLE);
 //                }else{
