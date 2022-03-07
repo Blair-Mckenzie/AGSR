@@ -36,11 +36,9 @@ public class HistoryAdapter extends ListAdapter<History, HistoryAdapter.HistoryV
         holder.historyStepsWalked.setText(MessageFormat.format("Steps Walked - {0}",String.valueOf(history.getCurrentSteps())));
         holder.historyTargetSteps.setText(MessageFormat.format("Target Steps - {0}",String.valueOf(history.getGoalSteps())));
         holder.historyGoalCompleted.setText(MessageFormat.format("Goal Completed - {0} %", String.valueOf(Math.round(prog))));
-//        holder.targetNumStepsView.setText(MessageFormat.format("{0} Steps", String.valueOf(target.getNumSteps())));
     }
 
     public class HistoryViewHolder extends RecyclerView.ViewHolder {
-        LinearLayout targetLayout;
         TextView historyTargetTitle;
         TextView historyStepsWalked;
         TextView historyTargetSteps;
@@ -48,7 +46,6 @@ public class HistoryAdapter extends ListAdapter<History, HistoryAdapter.HistoryV
 
         HistoryViewHolder(View itemView) {
             super(itemView);
-//            targetLayout = itemView.findViewById(R.id.target_layout);
             historyTargetTitle = itemView.findViewById(R.id.history_target_title);
             historyStepsWalked = itemView.findViewById(R.id.history_completed_steps);
             historyTargetSteps = itemView.findViewById(R.id.history_target_steps);
@@ -65,7 +62,8 @@ public class HistoryAdapter extends ListAdapter<History, HistoryAdapter.HistoryV
 
         @Override
         public boolean areContentsTheSame(@NonNull History oldItem, @NonNull History newItem) {
-            return oldItem.getGoalTitle().equals(newItem.getGoalTitle()) &&
+            return oldItem.getDate().equals(newItem.getDate())&&
+                    oldItem.getGoalTitle().equals(newItem.getGoalTitle()) &&
                     oldItem.getGoalSteps() == newItem.getGoalSteps()&&
                     oldItem.getCurrentSteps() == newItem.getCurrentSteps();
         }

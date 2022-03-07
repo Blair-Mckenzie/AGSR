@@ -31,11 +31,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link fragment_home#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class fragment_home extends Fragment {
 
     private RecyclerView recyclerView;
@@ -155,7 +151,6 @@ public class fragment_home extends Fragment {
 
     public void updateProgressBar() {
         double prog = (((double) numSteps / (double) goal) * 100);
-//        progressBar.setProgress((int) prog, true);
         ObjectAnimator.ofInt(progressBar, "progress", (int) prog).setDuration(350).start();
         displayCurrentSteps.setText(MessageFormat.format("{0} / {1}", String.valueOf(numSteps), goal));
         displayPercentage.setText(MessageFormat.format("{0} %", String.valueOf(Math.round(prog))));
@@ -176,5 +171,4 @@ public class fragment_home extends Fragment {
             }
         }
     };
-
 }

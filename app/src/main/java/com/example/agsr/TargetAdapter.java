@@ -1,5 +1,7 @@
 package com.example.agsr;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,9 +20,11 @@ import java.text.MessageFormat;
 public class TargetAdapter extends ListAdapter<Target, TargetAdapter.TargetViewHolder> {
 
     private OnItemClickListener listener;
+    Context context;
 
-    TargetAdapter(@NonNull DiffUtil.ItemCallback<Target> diffCallback) {
+    TargetAdapter(@NonNull DiffUtil.ItemCallback<Target> diffCallback, Context context) {
         super(diffCallback);
+        this.context = context;
     }
 
     public interface OnItemClickListener {
@@ -44,8 +48,15 @@ public class TargetAdapter extends ListAdapter<Target, TargetAdapter.TargetViewH
     @Override
     public void onBindViewHolder(@NonNull TargetViewHolder holder, int position) {
         Target target= getItem(position);
+        SharedPreferences sharedPreferences = context.getSharedPreferences("AGSR", Context.MODE_PRIVATE);
+        Boolean isGoalsToggled = sharedPreferences.getBoolean("goalsToggle", false);
         holder.targetTitleView.setText(target.getTitle());
         holder.targetNumStepsView.setText(MessageFormat.format("{0} Steps", String.valueOf(target.getNumSteps())));
+        if(!isGoalsToggled){
+            holder.editButton.setVisibility(View.INVISIBLE);
+        }else {
+            holder.editButton.setVisibility(View.VISIBLE);
+        }
     }
 
     public class TargetViewHolder extends RecyclerView.ViewHolder {

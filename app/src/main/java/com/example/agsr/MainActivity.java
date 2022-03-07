@@ -33,13 +33,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-//        SharedPreferences sharedPreferences = getSharedPreferences("AGSR",MODE_PRIVATE);
-//        prefs = sharedPreferences.edit();
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.toolbar, menu);

@@ -138,20 +138,22 @@ public class fragment_targets extends Fragment {
                 }
             }
         }
+        listener = (prefs, key) -> toggleChanged();
+        sharedPreferences.registerOnSharedPreferenceChangeListener(listener);
+    }
 
-        listener = (prefs, key) -> {
-            isGoalsToggled = sharedPreferences.getBoolean("goalsToggle", false);
-            if (currentList.size() != 0) {
-                for (int i = 0; i < currentList.size(); i++) {
-                    if (!isGoalsToggled && !currentList.get(i).isActive()) {
-                        disableEditButtons(i, 't');
-                    }else if(isGoalsToggled && !currentList.get(i).isActive()){
-                        disableEditButtons(i, 'u');
-                    }
+    private void toggleChanged() {
+        isGoalsToggled = sharedPreferences.getBoolean("goalsToggle", false);
+        List<Target> currentList = adapter.getCurrentList();
+        if (currentList.size() != 0) {
+            for (int i = 0; i < currentList.size(); i++) {
+                if (!isGoalsToggled && !currentList.get(i).isActive()) {
+                    disableEditButtons(i, 't');
+                }else if(isGoalsToggled && !currentList.get(i).isActive()){
+                    disableEditButtons(i, 'u');
                 }
             }
-        };
-        sharedPreferences.registerOnSharedPreferenceChangeListener(listener);
+        }
     }
 
 
@@ -294,7 +296,7 @@ public class fragment_targets extends Fragment {
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), layoutManager.getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
 
-        adapter = new TargetAdapter(new TargetAdapter.TargetDiff());
+        adapter = new TargetAdapter(new TargetAdapter.TargetDiff(), this.getContext());
         recyclerView.setAdapter(adapter);
         targetViewModel = new ViewModelProvider(this).get(TargetViewModel.class);
         targetViewModel.getAllTargets().observe(getViewLifecycleOwner(), targets -> adapter.submitList(targets));

@@ -63,19 +63,6 @@ public class BottomSheetFragment extends BottomSheetDialogFragment {
         View view = inflater.inflate(R.layout.fragment_bottom_sheet, container, false);
         toggleHistory = view.findViewById(R.id.toggle_history);
         toggleGoals = view.findViewById(R.id.toggle_goals);
-
-//        toggleHistory.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-//                Activity.getSupportFragmentManager();
-//                if(b){
-//                    editHistory.setVisibility(View.VISIBLE);
-//                }else{
-//                    editHistory.setVisibility(View.INVISIBLE);
-//                }
-//            }
-//        });
-
         return view;
     }
 }
