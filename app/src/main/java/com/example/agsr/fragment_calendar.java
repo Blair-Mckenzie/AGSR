@@ -3,6 +3,7 @@ package com.example.agsr;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.location.GnssAntennaInfo;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +28,7 @@ import org.json.JSONObject;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.EventListener;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -46,6 +48,8 @@ public class fragment_calendar extends Fragment {
     ArrayList<String> currentGoals;
     HashMap<String, Integer> mapOfTargets;
     String selectedTarget = "";
+    Button editHistory;
+    SharedPreferences.OnSharedPreferenceChangeListener listener;
 
     public fragment_calendar() {
         // Required empty public constructor
@@ -73,6 +77,19 @@ public class fragment_calendar extends Fragment {
             }
         }
         sharedPreferences = this.getActivity().getSharedPreferences("AGSR", Context.MODE_PRIVATE);
+        listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+                // Implementation
+                isHistoryToggled = sharedPreferences.getBoolean("historyToggle", false);
+                if (!isHistoryToggled) {
+                    editHistory.setVisibility(View.INVISIBLE);
+                } else {
+                    editHistory.setVisibility(View.VISIBLE);
+                }
+            }
+        };
+
+        sharedPreferences.registerOnSharedPreferenceChangeListener(listener);
         Set<String> set = sharedPreferences.getStringSet("listOfTargets", null);
         currentGoals = new ArrayList<>(set);
         mapOfTargets = new HashMap<>();
@@ -97,7 +114,7 @@ public class fragment_calendar extends Fragment {
         recyclerView = view.findViewById(R.id.history_recycler_view);
         CalendarView calendarView = view.findViewById(R.id.calendarView);
         Button deleteHistory = view.findViewById(R.id.delete_history_button);
-        Button editHistory = view.findViewById(R.id.edit_history_button);
+        editHistory = view.findViewById(R.id.edit_history_button);
         sharedPreferences = this.getActivity().getSharedPreferences("AGSR", Context.MODE_PRIVATE);
         isHistoryToggled = sharedPreferences.getBoolean("historyToggle", false);
 //        if (isHistoryToggled) {
