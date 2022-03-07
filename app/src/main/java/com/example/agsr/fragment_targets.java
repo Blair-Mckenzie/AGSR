@@ -43,6 +43,7 @@ public class fragment_targets extends Fragment {
     private RecyclerView recyclerView;
     public static TargetViewModel targetViewModel;
     public TargetAdapter adapter;
+    SharedPreferences sharedPreferences;
     SharedPreferences.Editor prefs;
     boolean isGoalsToggled;
     SharedPreferences.OnSharedPreferenceChangeListener listener;
@@ -80,7 +81,6 @@ public class fragment_targets extends Fragment {
             sendData(currentList.get(activeTarget));
             outState.putInt("position", activeTarget);
         }
-
         super.onSaveInstanceState(outState);
     }
 
@@ -103,7 +103,7 @@ public class fragment_targets extends Fragment {
                 mapOfTargets.put(currentList.get(i).getTitle(), currentList.get(i).getNumSteps());
             }
         }
-        SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences("AGSR", Context.MODE_PRIVATE);
+        sharedPreferences = this.getActivity().getSharedPreferences("AGSR", Context.MODE_PRIVATE);
         prefs = sharedPreferences.edit();
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -123,30 +123,35 @@ public class fragment_targets extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-//        recyclerView.postDelayed(() -> {
+        sharedPreferences = this.requireActivity().getSharedPreferences("AGSR", Context.MODE_PRIVATE);
+        isGoalsToggled = sharedPreferences.getBoolean("goalsToggle", false);
         List<Target> currentList = adapter.getCurrentList();
         if (currentList.size() != 0) {
             for (int i = 0; i < currentList.size(); i++) {
                 if (currentList.get(i).isActive()) {
                     changeTargetBackground(i, 's');
+                }else if (!isGoalsToggled){
+                    disableEditButtons(i, 't');
+                }
+                else{
+                    disableEditButtons(i, 'u');
                 }
             }
         }
-        SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences("AGSR", Context.MODE_PRIVATE);
-        listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-            public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-                // Implementation
-                isGoalsToggled = sharedPreferences.getBoolean("goalsToggle", false);
-                List<Target> currentList = adapter.getCurrentList();
-                if (currentList.size() != 0) {
-                    for (int i = 0; i < currentList.size(); i++) {
-                        if (!isGoalsToggled && !currentList.get(i).isActive()) {
-                            disableEditButtons(i, 't');
-                        }
+
+        listener = (prefs, key) -> {
+            isGoalsToggled = sharedPreferences.getBoolean("goalsToggle", false);
+            if (currentList.size() != 0) {
+                for (int i = 0; i < currentList.size(); i++) {
+                    if (!isGoalsToggled && !currentList.get(i).isActive()) {
+                        disableEditButtons(i, 't');
+                    }else if(isGoalsToggled && !currentList.get(i).isActive()){
+                        disableEditButtons(i, 'u');
                     }
                 }
             }
         };
+        sharedPreferences.registerOnSharedPreferenceChangeListener(listener);
     }
 
 
@@ -157,29 +162,21 @@ public class fragment_targets extends Fragment {
 
         FloatingActionButton addGoalButton = view.findViewById(R.id.fab);
         addGoalButton.setOnClickListener(view1 -> showPopupDialog("Add New Goal", 'a', view1, 0));
-
         adapter.setOnItemClickListener(new TargetAdapter.OnItemClickListener() {
+
             @Override
             public void onDeleteClick(int position) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
                 View viewInflated = LayoutInflater.from(getContext()).inflate(R.layout.confirm_delete_popup, (ViewGroup) getView(), false);
-                TextView confrimDelete = viewInflated.findViewById(R.id.delete_popup);
+                TextView confirmDelete = viewInflated.findViewById(R.id.delete_popup);
                 builder.setView(viewInflated);
                 String message = "Are you sure you wish to delete this goal";
-                confrimDelete.setText(message.toString());
-                builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        targetViewModel.delete(adapter.getCurrentList().get(position));
-                    }
+                confirmDelete.setText(message);
+                builder.setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                    dialog.dismiss();
+                    targetViewModel.delete(adapter.getCurrentList().get(position));
                 });
-                builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
+                builder.setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel());
                 builder.show();
             }
 
@@ -322,13 +319,11 @@ public class fragment_targets extends Fragment {
         } else if (!isGoalsToggled && selected == 'u') {
             goalLayout.setBackgroundColor(Color.parseColor("#FFFFFF"));
             deleteButton.setVisibility(View.VISIBLE);
-//            editButton.setVisibility(View.VISIBLE);
         } else {
             goalLayout.setBackgroundColor(Color.parseColor("#FFFFFF"));
             deleteButton.setVisibility(View.VISIBLE);
             editButton.setVisibility(View.VISIBLE);
         }
-
     }
 
 

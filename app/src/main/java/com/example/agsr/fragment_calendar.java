@@ -1,9 +1,7 @@
 package com.example.agsr;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.location.GnssAntennaInfo;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +26,6 @@ import org.json.JSONObject;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.EventListener;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -76,23 +73,22 @@ public class fragment_calendar extends Fragment {
                 historyViewModel.delete(currentList.get(i));
             }
         }
-        sharedPreferences = this.getActivity().getSharedPreferences("AGSR", Context.MODE_PRIVATE);
-        listener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-            public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-                // Implementation
-                isHistoryToggled = sharedPreferences.getBoolean("historyToggle", false);
-                if (!isHistoryToggled) {
-                    editHistory.setVisibility(View.INVISIBLE);
-                } else {
-                    editHistory.setVisibility(View.VISIBLE);
-                }
+        sharedPreferences = this.requireActivity().getSharedPreferences("AGSR", Context.MODE_PRIVATE);
+        listener = (prefs, key) -> {
+            isHistoryToggled = sharedPreferences.getBoolean("historyToggle", false);
+            if (!isHistoryToggled) {
+                editHistory.setVisibility(View.INVISIBLE);
+            } else {
+                editHistory.setVisibility(View.VISIBLE);
             }
         };
 
         sharedPreferences.registerOnSharedPreferenceChangeListener(listener);
         Set<String> set = sharedPreferences.getStringSet("listOfTargets", null);
-        currentGoals = new ArrayList<>(set);
-        mapOfTargets = new HashMap<>();
+        if(set != null){
+            currentGoals = new ArrayList<>(set);
+            mapOfTargets = new HashMap<>();
+        }
         try {
             String jsonString = sharedPreferences.getString("mapOfTargets", (new JSONObject()).toString());
             JSONObject jsonObject = new JSONObject(jsonString);
@@ -115,13 +111,9 @@ public class fragment_calendar extends Fragment {
         CalendarView calendarView = view.findViewById(R.id.calendarView);
         Button deleteHistory = view.findViewById(R.id.delete_history_button);
         editHistory = view.findViewById(R.id.edit_history_button);
-        sharedPreferences = this.getActivity().getSharedPreferences("AGSR", Context.MODE_PRIVATE);
+        sharedPreferences = this.requireActivity().getSharedPreferences("AGSR", Context.MODE_PRIVATE);
         isHistoryToggled = sharedPreferences.getBoolean("historyToggle", false);
-//        if (isHistoryToggled) {
-//            editHistory.setVisibility(View.VISIBLE);
-//        } else {
         editHistory.setVisibility(View.INVISIBLE);
-//        }
         currentDate = dateFormat.format(calendarView.getDate());
         System.out.println(calendarView.getDate());
         LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
@@ -163,26 +155,17 @@ public class fragment_calendar extends Fragment {
             TextView confrimDelete = viewInflated.findViewById(R.id.delete_popup);
             builder.setView(viewInflated);
             String message = "Are you sure you wish to delete all history (including today)";
-            confrimDelete.setText(message.toString());
-            builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                    historyViewModel.deleteAll();
-                    fragment_home.walkViewModel.deleteAll();
-                }
+            confrimDelete.setText(message);
+            builder.setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                dialog.dismiss();
+                historyViewModel.deleteAll();
+                fragment_home.walkViewModel.deleteAll();
             });
-            builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
+            builder.setNegativeButton(android.R.string.cancel, (dialog, which) -> dialog.cancel());
             builder.show();
         });
         editHistory.setOnClickListener(view1 -> {
             if (adapter.getCurrentList().size() == 0) {
-//                historyViewModel.insert(new History(currentDate,"Default",3000,8000));
                 showPopupDialog("Add Activity", 'a', view1, 0);
             } else {
                 showPopupDialog("Edit Activity", 'e', view1, 0);
@@ -216,7 +199,6 @@ public class fragment_calendar extends Fragment {
             }
         });
         EditText historyStepsInput = viewInflated.findViewById(R.id.history_steps_input);
-        TextView historyTargetTitle = viewInflated.findViewById(R.id.history_target_title);
 
         if (type == 'e') {
             View v = Objects.requireNonNull(recyclerView.findViewHolderForAdapterPosition(0)).itemView;
@@ -234,7 +216,6 @@ public class fragment_calendar extends Fragment {
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
             if (!(checkDialogEmpty(historyStepsInput))) {
                 dialog.dismiss();
-//                String newTitle = titleInput.getText().toString().trim();
                 if (type == 'e') {
                     History history = adapter.getCurrentList().get(0);
                     int id = history.getId();
@@ -247,7 +228,6 @@ public class fragment_calendar extends Fragment {
             }
         });
     }
-//    }
 
     private boolean checkDialogEmpty(EditText numSteps) {
         if (numSteps.getText().toString().length() == 0) {
