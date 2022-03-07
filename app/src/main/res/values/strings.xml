@@ -7,7 +7,7 @@
     <string name="profile_fragment_message">Walking Goals</string>
     <string name="calendar_fragment_message">Calendar</string>
     <string name="steps_input">Add Steps</string>
-    <string name="enter_button_text">Enter</string>
+    <string name="enter_button_text">ENTER</string>
     <string name="title_input">Activity Name</string>
     <string name="target_text">Default</string>
     <string name="delete_steps">Remove</string>
@@ -15,11 +15,11 @@
     <string name="target_title_input">Goal Name</string>
     <string name="target_num_steps_input">Number of Steps</string>
     <string name="cancel_button_text">Cancel</string>
-    <string name="add_button_text">Add</string>
+    <string name="add_button_text">ADD</string>
     <string name="settings_text">Settings</string>
     <string name="about_menu_text">About</string>
     <string name="toggle_editable_goals">Toggle editable goals</string>
     <string name="toggle_historical_editing">Toggle Historical Editing</string>
-    <string name="delete_all_history">Delete All History</string>
-    <string name="edit_history">Edit/Add Activity</string>
+    <string name="delete_all_history">DELETE ALL HISTORY</string>
+    <string name="edit_history">EDIT/ADD ACTIVITY</string>
 </resources>
